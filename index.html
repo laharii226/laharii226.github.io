@@ -1,139 +1,1176 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#080e18" />
-  <title>MECHMIND 3D — Solid Mechanics Workspace</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-  <script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TENSOR | Shear Centre Studio</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --navy: #17213a;
+  --purple: #635bff;
+  --lavender: #eeedff;
+  --background: #f5f7fc;
+  --border: #e0e6f1;
+  --text: #202b45;
+  --muted: #75819b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font-family: Inter, sans-serif;
+}
+
+button, input, select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+header {
+  height: 70px;
+  padding: 0 28px;
+  background: var(--navy);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: 5px;
+}
+
+.logo span {
+  color: #a9a4ff;
+}
+
+header small {
+  color: #c4cce0;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 215px minmax(0, 1fr);
+  min-height: calc(100vh - 70px);
+}
+
+.sidebar {
+  background: var(--navy);
+  padding: 20px 12px;
+  color: white;
+}
+
+.nav {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 13px;
+  margin-bottom: 5px;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  color: #d7deef;
+}
+
+.nav:hover, .nav.active {
+  background: #393d82;
+  color: white;
+}
+
+.sidebar h4 {
+  margin: 25px 12px 10px;
+  color: #929fba;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+main {
+  padding: 22px;
+  min-width: 0;
+}
+
+.hero {
+  background: linear-gradient(115deg, #e9eaff, #dceaff, #f9faff);
+  border: 1px solid #dce3ff;
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 18px;
+}
+
+.eyebrow {
+  color: #655be9;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.hero h1 {
+  font: 700 38px "Space Grotesk", sans-serif;
+  margin: 12px 0;
+}
+
+.hero p {
+  max-width: 620px;
+  line-height: 1.7;
+  color: #56627d;
+}
+
+.primary {
+  background: var(--purple);
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  padding: 12px 17px;
+  font-weight: 600;
+}
+
+.secondary {
+  background: white;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 11px 15px;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, .8fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.stack {
+  display: grid;
+  gap: 16px;
+}
+
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 22px #26365a08;
+}
+
+.card h2 {
+  font: 600 16px "Space Grotesk", sans-serif;
+  margin: 0;
+}
+
+.card-title {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.number {
+  color: var(--purple);
+  margin-right: 8px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  padding: 12px;
+}
+
+.tool {
+  padding: 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: white;
+  color: #53617c;
+  font-size: 12px;
+}
+
+.tool.active {
+  background: var(--lavender);
+  border-color: #a8a1ff;
+  color: #5148e8;
+}
+
+.canvas {
+  margin: 0 12px;
+  height: 350px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fcfdff;
+}
+
+.canvas svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+.canvas-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 12px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px;
+  padding: 16px;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+}
+
+.field label {
+  color: #64718c;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.field input, .field select {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: white;
+  color: var(--text);
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.segmented {
+  display: flex;
+  gap: 7px;
+}
+
+.segmented button {
+  flex: 1;
+  padding: 10px 5px;
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 7px;
+  color: #63708b;
+  font-size: 11px;
+}
+
+.segmented button.selected {
+  border-color: var(--purple);
+  background: var(--lavender);
+  color: #5148e8;
+}
+
+.section-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+  padding: 14px;
+}
+
+.section {
+  padding: 15px 5px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  color: #34425e;
+}
+
+.section strong {
+  display: block;
+  color: var(--purple);
+  font-size: 25px;
+  margin-bottom: 7px;
+}
+
+.section span {
+  font-size: 11px;
+}
+
+.section.selected {
+  border-color: var(--purple);
+  background: var(--lavender);
+}
+
+.results {
+  padding: 15px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e3e9f2;
+  font-size: 12px;
+}
+
+.result-row span {
+  color: var(--muted);
+}
+
+.result-row strong {
+  text-align: right;
+}
+
+.notice {
+  padding: 12px;
+  border: 1px solid #f1dfad;
+  background: #fff8e8;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #775c23;
+  margin-bottom: 12px;
+}
+
+.wide {
+  width: calc(100% - 30px);
+  margin: 0 15px 15px;
+}
+
+footer {
+  margin-top: 22px;
+  padding: 16px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+@media (max-width: 950px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
   }
 }
-</script>
-  <script type="module" src="app.js"></script>
+
+@media (max-width: 550px) {
+  header {
+    padding: 0 14px;
+  }
+
+  header small {
+    display: none;
+  }
+
+  main {
+    padding: 12px;
+  }
+
+  .hero {
+    padding: 20px;
+  }
+
+  .hero h1 {
+    font-size: 29px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full {
+    grid-column: auto;
+  }
+
+  .canvas {
+    height: 290px;
+  }
+}
+</style>
 </head>
+
 <body>
-  <div class="app-shell">
-    <header class="topbar">
-      <a class="brand" href="#overview" aria-label="MECHMIND 3D home">
-        <span class="brand-icon">M<span>3</span></span>
-        <span class="brand-copy"><strong>MECHMIND <b>3D</b></strong><small>MECHANICS WORKSPACE</small></span>
-      </a>
-      <div class="top-center"><span class="status-led"></span><span>LOCAL ANALYTICAL SESSION</span><span class="top-divider"></span><span id="projectNameTop">Untitled project</span></div>
-      <div class="top-actions">
-        <button class="icon-btn" id="saveProjectBtn" title="Save project JSON">↓</button>
-        <button class="icon-btn" id="loadProjectBtn" title="Load project JSON">↑</button>
-        <button class="user-chip" id="helpBtn"><span>?</span> Guide</button>
-        <input type="file" id="projectFile" accept=".json,application/json" hidden>
+
+<header>
+  <div class="logo">T<span>◆</span> TENSOR</div>
+  <small>Design · Analyse · Understand</small>
+</header>
+
+<div class="layout">
+
+<aside class="sidebar">
+  <button class="nav active" data-page="home">⌂ &nbsp; Home</button>
+  <button class="nav" id="newAnalysis">＋ &nbsp; New Analysis</button>
+  <button class="nav" id="examples">▦ &nbsp; Examples</button>
+
+  <h4>SECTION PRESETS</h4>
+
+  <button class="nav" data-section="C">C-section</button>
+  <button class="nav" data-section="I">I-section</button>
+  <button class="nav" data-section="T">T-section</button>
+  <button class="nav" data-section="L">L-section</button>
+  <button class="nav" data-section="Box">Box section</button>
+  <button class="nav" data-section="Tube">Circular tube</button>
+</aside>
+
+<main>
+
+<section class="hero">
+  <div class="eyebrow">INTERACTIVE SOLID MECHANICS</div>
+  <h1>Build. Load. Understand.</h1>
+  <p>
+    Explore how cross-section geometry, material properties and
+    loading conditions influence thin-walled beam behaviour.
+  </p>
+  <button class="primary" id="startButton">Start New Analysis →</button>
+</section>
+
+<div class="workspace">
+
+<div class="stack">
+
+<section class="card" id="geometryCard">
+
+<div class="card-title">
+  <h2><span class="number">01</span> Geometry & Model</h2>
+  <span id="sectionLabel">C-SECTION</span>
+</div>
+
+<div class="toolbar">
+  <button class="tool active" data-tool="select">↖ Select</button>
+  <button class="tool" data-tool="line">╱ Line</button>
+  <button class="tool" data-tool="rect">□ Rectangle</button>
+  <button class="tool" data-tool="circle">○ Circle</button>
+  <button class="tool" id="undoButton">↶ Undo</button>
+  <button class="tool" id="clearButton">Clear</button>
+</div>
+
+<div class="canvas">
+<svg id="drawing" viewBox="0 0 700 350">
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20"
+        fill="none" stroke="#e8edf7" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="700" height="350" fill="url(#grid)"/>
+  <line x1="350" y1="0" x2="350" y2="350"
+    stroke="#cbd4e5" stroke-dasharray="5 5"/>
+  <line x1="0" y1="175" x2="700" y2="175"
+    stroke="#cbd4e5" stroke-dasharray="5 5"/>
+
+  <g id="sectionLayer"></g>
+  <g id="userLayer"></g>
+</svg>
+</div>
+
+<div class="canvas-footer">
+  <span style="font-size:12px;color:#75819b" id="drawStatus">
+    Select a drawing tool to sketch geometry
+  </span>
+  <button class="secondary" id="resetDrawing">Reset Section</button>
+</div>
+
+<div class="form-grid">
+  <div class="field">
+    <label for="height">Height (mm)</label>
+    <input id="height" type="number" min="1" value="60">
+  </div>
+
+  <div class="field">
+    <label for="width">Width (mm)</label>
+    <input id="width" type="number" min="1" value="100">
+  </div>
+
+  <div class="field">
+    <label for="thickness">Thickness (mm)</label>
+    <input id="thickness" type="number" min="0.1" step="0.1" value="2">
+  </div>
+
+  <div class="field">
+    <label for="length">Beam length (mm)</label>
+    <input id="length" type="number" min="1" value="500">
+  </div>
+
+  <div class="field full">
+    <button class="primary" id="applyDimensions">Apply Dimensions</button>
+  </div>
+</div>
+
+</section>
+
+<section class="card">
+  <div class="card-title">
+    <h2>Section Library</h2>
+    <span>Presets</span>
+  </div>
+
+  <div class="section-grid">
+    <button class="section selected" data-section="C">
+      <strong>⊏</strong><span>C-section</span>
+    </button>
+
+    <button class="section" data-section="I">
+      <strong>Ⅰ</strong><span>I-section</span>
+    </button>
+
+    <button class="section" data-section="T">
+      <strong>⊤</strong><span>T-section</span>
+    </button>
+
+    <button class="section" data-section="L">
+      <strong>⌞</strong><span>L-section</span>
+    </button>
+
+    <button class="section" data-section="Box">
+      <strong>▣</strong><span>Box section</span>
+    </button>
+
+    <button class="section" data-section="Tube">
+      <strong>◎</strong><span>Circular tube</span>
+    </button>
+  </div>
+</section>
+
+</div>
+
+<div class="stack">
+
+<section class="card">
+  <div class="card-title">
+    <h2><span class="number">02</span> Load & Material</h2>
+  </div>
+
+  <div class="form-grid">
+
+    <div class="field full">
+      <label>Load Type</label>
+      <div class="segmented" id="loadTypes">
+        <button class="selected" data-load="Point Load">Point Load</button>
+        <button data-load="Distributed Load">Distributed</button>
+        <button data-load="Moment">Moment</button>
       </div>
-    </header>
+    </div>
 
-    <div class="main-layout">
-      <aside class="sidebar">
-        <div class="side-label">WORKSPACE</div>
-        <button class="nav-item active" data-view="overview"><span class="nav-icon">⌂</span><span>Overview</span><kbd>01</kbd></button>
-        <button class="nav-item" data-view="geometry"><span class="nav-icon">◇</span><span>Geometry</span><kbd>02</kbd></button>
-        <button class="nav-item" data-view="mechanics"><span class="nav-icon">∑</span><span>Mechanics lab</span><kbd>03</kbd></button>
-        <button class="nav-item" data-view="materials"><span class="nav-icon">▦</span><span>Materials</span><kbd>04</kbd></button>
-        <button class="nav-item" data-view="photo"><span class="nav-icon">▧</span><span>Photo scale</span><kbd>05</kbd></button>
-        <button class="nav-item" data-view="reports"><span class="nav-icon">▤</span><span>Reports</span><kbd>06</kbd></button>
-        <div class="side-spacer"></div>
-        <div class="sidebar-card"><div class="sidebar-card-icon">⌁</div><b>Engineering first.</b><p>Every result is tied to a stated model and its assumptions.</p><span class="mini-tag">EDUCATIONAL TOOL</span></div>
-        <div class="sidebar-foot">BUILD <b>0.2.0</b><span>·</span> FRONTEND PROTOTYPE</div>
-      </aside>
+    <div class="field">
+      <label for="magnitude">Magnitude</label>
+      <input id="magnitude" type="number" min="0" value="10">
+    </div>
 
-      <main class="content" id="overview">
-        <section class="page-heading">
-          <div><div class="eyebrow"><span class="eyebrow-line"></span> SOLID MECHANICS / DIGITAL LAB</div><h1>Design. Analyse. <em>Understand.</em></h1><p>Explore how geometry, material and loading govern structural response.</p></div>
-          <div class="heading-right"><span class="project-status"><i></i> MODEL READY</span><button class="btn btn-outline" id="resetBtn">↺ Reset model</button></div>
-        </section>
+    <div class="field">
+      <label for="loadUnit">Unit</label>
+      <select id="loadUnit">
+        <option>kN</option>
+        <option>N</option>
+        <option>kN/m</option>
+        <option>N·m</option>
+      </select>
+    </div>
 
-        <section class="workflow" aria-label="Analysis workflow">
-          <div class="workflow-step active"><span>01</span><b>Create</b></div><i></i><div class="workflow-step active"><span>02</span><b>Configure</b></div><i></i><div class="workflow-step active"><span>03</span><b>Load</b></div><i></i><div class="workflow-step active"><span>04</span><b>Analyse</b></div><i></i><div class="workflow-step"><span>05</span><b>Inspect</b></div><i></i><div class="workflow-step"><span>06</span><b>Predict</b></div>
-        </section>
+    <div class="field full">
+      <label for="direction">Direction</label>
+      <select id="direction">
+        <option>Vertical (+y)</option>
+        <option>Vertical (-y)</option>
+        <option>Horizontal (+z)</option>
+        <option>Horizontal (-z)</option>
+      </select>
+    </div>
 
-        <section class="dashboard-grid">
-          <aside class="panel setup-panel">
-            <div class="panel-head"><div><span class="section-kicker">MODEL DEFINITION</span><h2>Setup</h2></div><span class="step-count">01 — 03</span></div>
-            <div class="control-section">
-              <div class="control-title"><span class="number">01</span><b>Structure</b></div>
-              <label for="preset">Example model</label>
-              <select id="preset">
-                <option value="cantilever">Hollow cantilever tube</option>
-                <option value="shaft">Solid circular shaft</option>
-                <option value="thin">Thin-wall circular tube</option>
-              </select>
-              <label for="length">Member length <span>m</span></label>
-              <input id="length" type="number" min="0.05" step="0.05" value="1.20">
-              <div class="two-col">
-                <div><label for="outerD">Outer diameter <span>mm</span></label><input id="outerD" type="number" min="1" step="1" value="60"></div>
-                <div><label for="innerD">Inner diameter <span>mm</span></label><input id="innerD" type="number" min="0" step="1" value="45"></div>
-              </div>
-              <div class="geometry-readout"><span>Wall thickness</span><b id="wallThickness">7.50 mm</b></div>
-            </div>
-            <div class="control-section">
-              <div class="control-title"><span class="number">02</span><b>Material</b><button class="text-link" data-open="materials">Library ↗</button></div>
-              <label for="material">Material preset</label>
-              <select id="material"><option value="steel">Structural steel · typical</option><option value="aluminium">Aluminium alloy · typical</option><option value="titanium">Titanium alloy · typical</option><option value="custom">Custom material</option></select>
-              <div class="material-summary"><div class="material-swatch"></div><div><b id="materialName">Structural steel</b><small id="materialProps">E 200 GPa · σᵧ 250 MPa · ρ 7850 kg/m³</small></div></div>
-              <div id="customMaterial" class="custom-fields hidden"><div class="two-col"><div><label for="customE">Young's modulus <span>GPa</span></label><input id="customE" type="number" value="200"></div><div><label for="customYield">Yield strength <span>MPa</span></label><input id="customYield" type="number" value="250"></div></div><div class="two-col"><div><label for="customNu">Poisson ratio</label><input id="customNu" type="number" min="0" max="0.49" step="0.01" value="0.30"></div><div><label for="customDensity">Density <span>kg/m³</span></label><input id="customDensity" type="number" value="7850"></div></div></div>
-            </div>
-            <div class="control-section">
-              <div class="control-title"><span class="number">03</span><b>Boundary & loads</b></div>
-              <label for="support">Support condition</label><select id="support"><option value="fixed">Fixed at left · cantilever</option><option value="simply">Simply supported · centre load</option></select>
-              <div class="two-col"><div><label for="force">Transverse force <span>N</span></label><input id="force" type="number" step="10" value="800"></div><div><label for="axial">Axial force <span>N</span></label><input id="axial" type="number" step="10" value="0"></div></div>
-              <div class="two-col"><div><label for="eccentricity">Eccentricity <span>mm · z</span></label><input id="eccentricity" type="number" step="1" value="8"></div><div><label for="torque">Applied torque <span>N·m</span></label><input id="torque" type="number" step="1" value="15"></div></div>
-              <label for="probe">Probe location <span id="probePct">100%</span></label><input id="probe" class="range" type="range" min="0" max="100" value="100">
-              <div class="range-captions"><span>Support</span><span>Free end</span></div>
-            </div>
-            <button class="btn btn-primary full" id="analyseBtn">Run analysis <span>↗</span></button>
-            <p class="panel-footnote">SI units are used internally. Values are recalculated from the current inputs.</p>
-          </aside>
+    <div class="field full">
+      <label for="material">Material</label>
+      <select id="material">
+        <option value="aluminium">Aluminium</option>
+        <option value="steel">Steel</option>
+        <option value="custom">Custom</option>
+      </select>
+    </div>
 
-          <section class="panel viewport-panel">
-            <div class="panel-head viewport-head"><div><span class="section-kicker">LIVE 3D ENVIRONMENT</span><h2 id="viewportTitle">Hollow cantilever tube</h2></div><div class="viewport-actions"><button class="view-toggle active" data-render="solid">Solid</button><button class="view-toggle" data-render="wire">Wire</button><button class="view-toggle" data-render="transparent">X-ray</button></div></div>
-            <div class="viewport-wrap"><div id="viewport" aria-label="Interactive three-dimensional model"></div><div class="viewport-overlay top-left"><span class="live-dot"></span> LIVE MODEL <span class="overlay-divider">/</span> METRIC</div><div class="viewport-overlay top-right"><button class="camera-btn" data-camera="iso">ISO</button><button class="camera-btn" data-camera="front">FRONT</button><button class="camera-btn" data-camera="top">TOP</button></div><div class="viewport-overlay bottom-left"><span class="axis-key x-key">X</span><span class="axis-key y-key">Y</span><span class="axis-key z-key">Z</span><span class="orientation-note">Drag to orbit · Scroll to zoom · Right-drag to pan</span></div><div class="viewport-overlay bottom-right"><span class="scale-label">MODEL SCALE</span><b id="modelScale">1.20 m</b></div></div>
-            <div class="viewport-legend"><span><i class="legend-material"></i> Material</span><span><i class="legend-load"></i> Applied load</span><span><i class="legend-support"></i> Fixed support</span><span class="legend-hint">Deformation is magnified for visibility</span></div>
-            <div class="kpi-row"><div class="kpi"><span>PEAK BENDING STRESS</span><b id="kpiStress">—</b><small id="kpiStressSub">Outer fibre</small></div><div class="kpi"><span>TIP DEFLECTION</span><b id="kpiDeflection">—</b><small>Linear elastic estimate</small></div><div class="kpi"><span>ANGLE OF TWIST</span><b id="kpiTwist">—</b><small>Saint-Venant · circular</small></div><div class="kpi"><span>FACTOR OF SAFETY</span><b id="kpiFos">—</b><small>Von Mises · yield check</small></div></div>
-          </section>
+    <div class="field">
+      <label for="youngs">Young's Modulus (GPa)</label>
+      <input id="youngs" type="number" min="0.01" value="69">
+    </div>
 
-          <aside class="panel results-panel">
-            <div class="panel-head"><div><span class="section-kicker">SOLVER OUTPUT</span><h2>Results</h2></div><span class="result-live"><i></i> CURRENT</span></div>
-            <div class="result-group"><div class="result-heading">SECTION PROPERTIES <span>GEOMETRY</span></div><div class="result-line"><span>Cross-sectional area</span><b id="resArea">—</b></div><div class="result-line"><span>Second moment, I</span><b id="resI">—</b></div><div class="result-line"><span>Polar moment, J</span><b id="resJ">—</b></div><div class="result-line"><span>Mass per unit length</span><b id="resMass">—</b></div></div>
-            <div class="result-group"><div class="result-heading">AT PROBE LOCATION <span id="probeLocation">x = 1.20 m</span></div><div class="result-line"><span>Bending moment</span><b id="resMoment">—</b></div><div class="result-line"><span>Axial normal stress</span><b id="resAxial">—</b></div><div class="result-line"><span>Bending normal stress</span><b id="resBending">—</b></div><div class="result-line"><span>Torsional shear stress</span><b id="resShear">—</b></div><div class="result-line"><span>Normal strain</span><b id="resStrain">—</b></div><div class="result-line"><span>Deflection at probe</span><b id="resDisp">—</b></div><div class="result-line"><span>Twist at probe</span><b id="resAngle">—</b></div></div>
-            <div class="safety-box"><div><span>VON MISES YIELD CHECK</span><b id="yieldValue">—</b></div><span class="safety-pill" id="yieldStatus">NOT RUN</span></div>
-            <p class="result-note" id="resultNote">Run the analysis to populate calculated outputs.</p>
-          </aside>
-        </section>
+    <div class="field">
+      <label for="shear">Shear Modulus (GPa)</label>
+      <input id="shear" type="number" min="0.01" value="26">
+    </div>
 
-        <section class="analysis-grid">
-          <article class="panel chart-panel"><div class="panel-head"><div><span class="section-kicker">STRUCTURAL RESPONSE</span><h2>Beam response</h2></div><select id="chartMode" class="compact-select"><option value="deflection">Deflection · mm</option><option value="moment">Bending moment · N·m</option><option value="stress">Bending stress · MPa</option></select></div><canvas id="responseChart" height="180"></canvas><div class="chart-caption"><span><i class="chart-key"></i><b id="chartCaption">Calculated response along member</b></span><small>Analytical beam model · 41 stations</small></div></article>
-          <article class="panel formula-panel"><div class="panel-head"><div><span class="section-kicker">CALCULATION TRACE</span><h2>Show the mathematics</h2></div><button class="text-link" id="mathToggle">Collapse −</button></div><div id="mathBody" class="math-list"><div><b>Hollow circular area</b><code>A = π/4 (Dₒ² − Dᵢ²)</code></div><div><b>Second moment of area</b><code>I = π/64 (Dₒ⁴ − Dᵢ⁴)</code></div><div><b>Bending stress</b><code>σᵦ = Mc / I</code></div><div><b>Circular torsion</b><code>τ = Tc / J &nbsp; · &nbsp; θ = TL / GJ</code></div><div><b>Von Mises estimate</b><code>σᵥₘ = √(σ² + 3τ²)</code></div><div class="substitution" id="substitution">Run analysis to see your model values substituted into the equations.</div></div></article>
-        </section>
+    <div class="field full">
+      <label>Wall Model</label>
+      <div class="segmented" id="wallTypes">
+        <button class="selected" data-wall="Thin-walled">Thin-walled</button>
+        <button data-wall="Thick-walled">Thick-walled</button>
+      </div>
+    </div>
 
-        <section class="bottom-grid">
-          <article class="panel inspector-panel"><div class="panel-head"><div><span class="section-kicker">POINT PROBE</span><h2>Inspect a location</h2></div><span class="inspect-tag">ANALYTICAL FIELD</span></div><div class="inspector-content"><div class="probe-visual"><div class="probe-cross"><span class="cross-circle"></span><span class="cross-center"></span><span class="cross-label top">+y</span><span class="cross-label right">+z</span></div><div><b>Outer-fibre probe</b><p>Current beam station and section-edge estimate.</p></div></div><div class="probe-values"><div><small>LONGITUDINAL STRESS</small><b id="probeStress">—</b></div><div><small>STRAIN εₓ</small><b id="probeStrain">—</b></div><div><small>DISPLACEMENT</small><b id="probeDisplacement">—</b></div></div></div></article>
-          <article class="panel prediction-panel"><div class="panel-head"><div><span class="section-kicker">FAILURE & LIFE LAB</span><h2>Prediction status</h2></div><span class="inspect-tag">STATIC CHECK</span></div><div class="prediction-content"><div class="prediction-icon">◎</div><div><b id="predictionTitle">Awaiting analysis</b><p id="predictionText">Static yield screening will appear after a successful calculation. Fatigue and creep require suitable material data and validated models.</p></div></div><div class="prediction-foot"><span>FATIGUE LIFE</span><b>Insufficient S–N data</b><span class="disabled-chip">NOT ESTIMATED</span></div></article>
-        </section>
+  </div>
+</section>
 
-        <footer class="footer"><span>MECHMIND 3D <b>·</b> EDUCATIONAL ENGINEERING TOOL</span><span>Analytical model only · Not a certified design system</span></footer>
-      </main>
+<section class="card">
+  <div class="card-title">
+    <h2><span class="number">03</span> Analysis Setup</h2>
+  </div>
+
+  <div class="form-grid">
+    <label style="font-size:12px">
+      <input type="checkbox" id="compareLoad" checked>
+      Compare load magnitudes
+    </label>
+
+    <label style="font-size:12px">
+      <input type="checkbox" id="compareMaterial" checked>
+      Compare materials
+    </label>
+
+    <label style="font-size:12px" class="full">
+      <input type="checkbox" id="compareThickness">
+      Compare thickness
+    </label>
+  </div>
+
+  <button class="primary wide" id="runAnalysis">▶ &nbsp; Prepare Analysis</button>
+</section>
+
+<section class="card" id="resultsCard">
+  <div class="card-title">
+    <h2>Model Summary</h2>
+    <span id="status">SETUP</span>
+  </div>
+
+  <div class="results">
+    <div class="notice" id="notice">
+      <strong>Solver not connected.</strong><br>
+      This prototype collects inputs and displays section geometry.
+      It does not yet calculate verified shear-centre coordinates
+      or deformation.
+    </div>
+
+    <div class="result-row">
+      <span>Section</span>
+      <strong id="outSection">C-section</strong>
+    </div>
+
+    <div class="result-row">
+      <span>Height × Width</span>
+      <strong id="outDimensions">60 × 100 mm</strong>
+    </div>
+
+    <div class="result-row">
+      <span>Thickness</span>
+      <strong id="outThickness">2 mm</strong>
+    </div>
+
+    <div class="result-row">
+      <span>Applied Load</span>
+      <strong id="outLoad">10 kN</strong>
+    </div>
+
+    <div class="result-row">
+      <span>Material E / G</span>
+      <strong id="outMaterial">69 / 26 GPa</strong>
     </div>
   </div>
 
-  <div class="modal-backdrop hidden" id="mohrModal"><section class="modal modal-wide"><div class="modal-head"><div><span class="section-kicker">MECHANICS LAB / 01</span><h2>Stress transformation & Mohr's circle</h2></div><button class="close-modal" data-close="mohrModal">×</button></div><div class="modal-grid"><div class="modal-controls"><p class="modal-intro">Enter a plane-stress state. The lab calculates principal stresses, maximum in-plane shear and the orientation of principal planes.</p><label for="sigmaX">σₓ <span>MPa</span></label><input id="sigmaX" type="number" value="80"><label for="sigmaY">σᵧ <span>MPa</span></label><input id="sigmaY" type="number" value="20"><label for="tauXY">τₓᵧ <span>MPa</span></label><input id="tauXY" type="number" value="30"><label for="thetaStress">Rotation angle θ <span>degrees</span></label><input id="thetaStress" type="number" value="30"><button class="btn btn-primary full" id="mohrCalc">Calculate transformation</button></div><div class="mohr-results"><canvas id="mohrCanvas" width="520" height="300"></canvas><div class="mohr-kpis"><div><small>σ₁</small><b id="principal1">—</b></div><div><small>σ₂</small><b id="principal2">—</b></div><div><small>τ MAX (IN-PLANE)</small><b id="maxShear">—</b></div><div><small>θₚ</small><b id="principalAngle">—</b></div></div><div class="transformed-state" id="transformedState">Enter values and calculate the transformed stress state.</div></div></div></section></div>
+  <button class="secondary wide" id="exportButton">
+    ↓ Export Model Inputs (.json)
+  </button>
+</section>
 
-  <div class="modal-backdrop hidden" id="photoModal"><section class="modal"><div class="modal-head"><div><span class="section-kicker">GEOMETRY INPUT / IMAGE REFERENCE</span><h2>Photo scale calibration</h2></div><button class="close-modal" data-close="photoModal">×</button></div><p class="modal-intro">Upload a reference photograph and enter a known real-world dimension. This tool calculates a pixel scale only; it does not infer hidden geometry or create an engineering-grade 3D model.</p><label class="upload-zone" for="photoFile"><span>＋</span><b>Choose a reference image</b><small>PNG, JPG or WEBP</small><input type="file" id="photoFile" accept="image/*" hidden></label><div id="photoPreviewWrap" class="photo-preview-wrap hidden"><img id="photoPreview" alt="Uploaded mechanical component reference"><div class="photo-scale-controls"><div><label for="knownLength">Known dimension <span>mm</span></label><input id="knownLength" type="number" min="0.01" value="100"></div><div><label for="pixelLength">Measured pixel distance <span>px</span></label><input id="pixelLength" type="number" min="1" value="250"></div></div><div class="calibration-result" id="calibrationResult">Scale not calculated.</div></div></section></div>
+</div>
+</div>
 
-  <div class="modal-backdrop hidden" id="guideModal"><section class="modal"><div class="modal-head"><div><span class="section-kicker">QUICK START</span><h2>Using MECHMIND 3D</h2></div><button class="close-modal" data-close="guideModal">×</button></div><ol class="guide-list"><li><b>Configure geometry.</b><span>Set member length and circular section dimensions. Inner diameter must be smaller than outer diameter.</span></li><li><b>Choose a material.</b><span>Material presets are representative values. Use verified grade-specific data for real design.</span></li><li><b>Apply loads.</b><span>Transverse force, axial force, eccentricity and torque are defined in the setup panel.</span></li><li><b>Run analysis.</b><span>Review the beam response, stress, strain, deflection, twist and static yield screen.</span></li><li><b>Explore the Mechanics Lab.</b><span>Use Mohr's circle to transform a 2D plane-stress state.</span></li><li><b>Save or export.</b><span>Save a project JSON or print the results page to PDF.</span></li></ol><div class="warning-note">This is an educational analytical prototype. It is not a finite-element solver, and it does not certify structural safety.</div></section></div>
+<footer>
+  <span>TENSOR · Solid Mechanics Project</span>
+  <span>Small changes. Big insights.</span>
+</footer>
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</main>
+</div>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+let currentSection = "C";
+let currentTool = "select";
+let currentLoad = "Point Load";
+let currentWall = "Thin-walled";
+let userShapes = [];
+let undoStack = [];
+
+const svgNS = "http://www.w3.org/2000/svg";
+const drawing = $("drawing");
+const sectionLayer = $("sectionLayer");
+const userLayer = $("userLayer");
+
+function svgElement(tag, attributes) {
+  const el = document.createElementNS(svgNS, tag);
+
+  Object.entries(attributes).forEach(([key, value]) => {
+    el.setAttribute(key, value);
+  });
+
+  return el;
+}
+
+function dimensions() {
+  return {
+    h: Math.max(1, Number($("height").value) || 60),
+    b: Math.max(1, Number($("width").value) || 100),
+    t: Math.max(0.1, Number($("thickness").value) || 2),
+    L: Math.max(1, Number($("length").value) || 500)
+  };
+}
+
+function saveUndo() {
+  undoStack.push({
+    section: currentSection,
+    shapes: JSON.parse(JSON.stringify(userShapes))
+  });
+
+  if (undoStack.length > 30) undoStack.shift();
+}
+
+function drawSection() {
+  sectionLayer.replaceChildren();
+
+  const { h, b, t } = dimensions();
+  const scale = Math.min(2.2, 240 / Math.max(h, b));
+  const H = h * scale;
+  const B = b * scale;
+  const T = Math.max(3, t * scale);
+  const x = (700 - B) / 2;
+  const y = (350 - H) / 2;
+
+  const style = {
+    fill: "#dedcff",
+    stroke: "#6257f5",
+    "stroke-width": "3",
+    "stroke-linejoin": "round"
+  };
+
+  let shape;
+
+  switch (currentSection) {
+    case "C":
+      shape = svgElement("path", {
+        d: `M ${x+B} ${y}
+            H ${x} V ${y+H} H ${x+B}
+            V ${y+H-T} H ${x+T}
+            V ${y+T} H ${x+B} Z`,
+        ...style
+      });
+      break;
+
+    case "I":
+      shape = svgElement("path", {
+        d: `M ${x} ${y} H ${x+B} V ${y+T}
+        H ${x+B/2+T/2} V ${y+H-T}
+        H ${x+B} V ${y+H} H ${x}
+        V ${y+H-T} H ${x+B/2-T/2}
+        V ${y+T} H ${x} Z`,
+        ...style
+      });
+      break;
+
+    case "T":
+      shape = svgElement("path", {
+        d: `M ${x} ${y} H ${x+B} V ${y+T}
+        H ${x+B/2+T/2} V ${y+H}
+        H ${x+B/2-T/2} V ${y+T} H ${x} Z`,
+        ...style
+      });
+      break;
+
+    case "L":
+      shape = svgElement("path", {
+        d: `M ${x} ${y} H ${x+T}
+        V ${y+H-T} H ${x+B}
+        V ${y+H} H ${x} Z`,
+        ...style
+      });
+      break;
+
+    case "Box":
+      shape = svgElement("path", {
+        d: `M ${x} ${y} H ${x+B} V ${y+H}
+        H ${x} Z M ${x+T} ${y+T}
+        V ${y+H-T} H ${x+B-T}
+        V ${y+T} Z`,
+        fill: "#dedcff",
+        stroke: "#6257f5",
+        "stroke-width": "3",
+        "fill-rule": "evenodd"
+      });
+      break;
+
+    case "Tube":
+      shape = svgElement("circle", {
+        cx: 350,
+        cy: 175,
+        r: Math.min(H, B) / 2,
+        fill: "#dedcff",
+        stroke: "#6257f5",
+        "stroke-width": "3"
+      });
+      break;
+
+    default:
+      shape = svgElement("path", {
+        d: `M ${x} ${y} H ${x+B} V ${y+H} H ${x} Z`,
+        ...style
+      });
+  }
+
+  sectionLayer.appendChild(shape);
+  drawDimensions();
+  renderUserShapes();
+  updateSummary();
+}
+
+function drawDimensions() {
+  const { h, b } = dimensions();
+  const scale = Math.min(2.2, 240 / Math.max(h, b));
+  const H = h * scale;
+  const B = b * scale;
+  const x = (700 - B) / 2;
+  const y = (350 - H) / 2;
+
+  const label = svgElement("text", {
+    x: 350,
+    y: Math.max(15, y - 10),
+    "text-anchor": "middle",
+    fill: "#46536f",
+    "font-size": "12",
+    "font-weight": "600"
+  });
+
+  label.textContent = `${b} mm`;
+  sectionLayer.appendChild(label);
+
+  const hLabel = svgElement("text", {
+    x: Math.max(15, x - 10),
+    y: 175,
+    transform: `rotate(-90 ${Math.max(15, x - 10)} 175)`,
+    "text-anchor": "middle",
+    fill: "#46536f",
+    "font-size": "12",
+    "font-weight": "600"
+  });
+
+  hLabel.textContent = `${h} mm`;
+  sectionLayer.appendChild(hLabel);
+}
+
+function renderUserShapes() {
+  userLayer.replaceChildren();
+
+  userShapes.forEach(s => {
+    let shape;
+
+    if (s.type === "line") {
+      shape = svgElement("line", {
+        x1: s.x1, y1: s.y1,
+        x2: s.x2, y2: s.y2,
+        stroke: "#ed8058",
+        "stroke-width": "3"
+      });
+    } else if (s.type === "rect") {
+      shape = svgElement("rect", {
+        x: Math.min(s.x1, s.x2),
+        y: Math.min(s.y1, s.y2),
+        width: Math.abs(s.x2 - s.x1),
+        height: Math.abs(s.y2 - s.y1),
+        fill: "#ffe1d3",
+        stroke: "#ed8058",
+        "stroke-width": "2"
+      });
+    } else if (s.type === "circle") {
+      shape = svgElement("circle", {
+        cx: s.x1,
+        cy: s.y1,
+        r: Math.hypot(s.x2-s.x1, s.y2-s.y1),
+        fill: "#ffe1d3",
+        stroke: "#ed8058",
+        "stroke-width": "2"
+      });
+    }
+
+    if (shape) userLayer.appendChild(shape);
+  });
+}
+
+function selectSection(name) {
+  saveUndo();
+  currentSection = name;
+  userShapes = [];
+
+  $("sectionLabel").textContent = name.toUpperCase() + "-SECTION";
+
+  document.querySelectorAll("[data-section]").forEach(button => {
+    button.classList.toggle("selected", button.dataset.section === name);
+    button.classList.toggle("active", button.dataset.section === name);
+  });
+
+  drawSection();
+}
+
+function updateSummary() {
+  const d = dimensions();
+
+  $("outSection").textContent = currentSection + "-section";
+  $("outDimensions").textContent = `${d.h} × ${d.b} mm`;
+  $("outThickness").textContent = `${d.t} mm`;
+  $("outLoad").textContent = `${$("magnitude").value || 0} ${$("loadUnit").value}`;
+  $("outMaterial").textContent =
+    `${$("youngs").value || 0} / ${$("shear").value || 0} GPa`;
+}
+
+function getSVGPoint(event) {
+  const point = drawing.createSVGPoint();
+  point.x = event.clientX;
+  point.y = event.clientY;
+
+  return point.matrixTransform(drawing.getScreenCTM().inverse());
+}
+
+let activeShape = null;
+
+drawing.addEventListener("pointerdown", event => {
+  if (currentTool === "select") return;
+
+  event.preventDefault();
+  saveUndo();
+
+  const point = getSVGPoint(event);
+
+  activeShape = {
+    type: currentTool,
+    x1: point.x,
+    y1: point.y,
+    x2: point.x,
+    y2: point.y
+  };
+
+  userShapes.push(activeShape);
+  renderUserShapes();
+  drawing.setPointerCapture(event.pointerId);
+});
+
+drawing.addEventListener("pointermove", event => {
+  if (!activeShape) return;
+
+  const point = getSVGPoint(event);
+  activeShape.x2 = point.x;
+  activeShape.y2 = point.y;
+
+  renderUserShapes();
+});
+
+drawing.addEventListener("pointerup", () => {
+  activeShape = null;
+});
+
+document.querySelectorAll("[data-tool]").forEach(button => {
+  button.addEventListener("click", () => {
+    currentTool = button.dataset.tool;
+
+    document.querySelectorAll("[data-tool]").forEach(tool => {
+      tool.classList.toggle("active", tool === button);
+    });
+
+    $("drawStatus").textContent =
+      currentTool === "select"
+        ? "Select mode"
+        : `Drawing mode: ${currentTool}`;
+  });
+});
+
+document.querySelectorAll("[data-section]").forEach(button => {
+  button.addEventListener("click", () => {
+    selectSection(button.dataset.section);
+  });
+});
+
+$("applyDimensions").addEventListener("click", drawSection);
+
+$("resetDrawing").addEventListener("click", () => {
+  $("height").value = 60;
+  $("width").value = 100;
+  $("thickness").value = 2;
+  $("length").value = 500;
+  userShapes = [];
+  selectSection("C");
+});
+
+$("clearButton").addEventListener("click", () => {
+  saveUndo();
+  userShapes = [];
+  renderUserShapes();
+});
+
+$("undoButton").addEventListener("click", () => {
+  const previous = undoStack.pop();
+
+  if (previous) {
+    currentSection = previous.section;
+    userShapes = previous.shapes;
+    drawSection();
+  } else {
+    userShapes.pop();
+    renderUserShapes();
+  }
+});
+
+document.querySelectorAll("#loadTypes button").forEach(button => {
+  button.addEventListener("click", () => {
+    currentLoad = button.dataset.load;
+
+    document.querySelectorAll("#loadTypes button").forEach(item => {
+      item.classList.toggle("selected", item === button);
+    });
+  });
+});
+
+document.querySelectorAll("#wallTypes button").forEach(button => {
+  button.addEventListener("click", () => {
+    currentWall = button.dataset.wall;
+
+    document.querySelectorAll("#wallTypes button").forEach(item => {
+      item.classList.toggle("selected", item === button);
+    });
+  });
+});
+
+$("material").addEventListener("change", () => {
+  if ($("material").value === "aluminium") {
+    $("youngs").value = 69;
+    $("shear").value = 26;
+  }
+
+  if ($("material").value === "steel") {
+    $("youngs").value = 200;
+    $("shear").value = 77;
+  }
+
+  updateSummary();
+});
+
+[
+  "height", "width", "thickness", "length",
+  "magnitude", "loadUnit", "youngs", "shear"
+].forEach(id => {
+  $(id).addEventListener("change", updateSummary);
+});
+
+$("runAnalysis").addEventListener("click", () => {
+  updateSummary();
+
+  $("status").textContent = "INPUTS READY";
+
+  $("notice").innerHTML =
+    "<strong>Model inputs collected.</strong><br>" +
+    "The numerical mechanics solver is not implemented yet. " +
+    "No verified shear-centre coordinates, stress values, or " +
+    "deformation values have been calculated.";
+
+  $("resultsCard").scrollIntoView({
+    behavior: "smooth",
+    block: "nearest"
+  });
+});
+
+$("exportButton").addEventListener("click", () => {
+  const d = dimensions();
+
+  const model = {
+    project: "TENSOR",
+    section: currentSection,
+    dimensions: {
+      height_mm: d.h,
+      width_mm: d.b,
+      thickness_mm: d.t,
+      length_mm: d.L
+    },
+    loading: {
+      type: currentLoad,
+      magnitude: Number($("magnitude").value) || 0,
+      unit: $("loadUnit").value,
+      direction: $("direction").value
+    },
+    material: {
+      name: $("material").value,
+      youngs_modulus_GPa: Number($("youngs").value) || 0,
+      shear_modulus_GPa: Number($("shear").value) || 0
+    },
+    model_assumptions: {
+      wall_type: currentWall
+    },
+    user_drawings: userShapes,
+    solver_status: "Not implemented"
+  };
+
+  const blob = new Blob(
+    [JSON.stringify(model, null, 2)],
+    { type: "application/json" }
+  );
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "tensor-model.json";
+  link.click();
+
+  URL.revokeObjectURL(url);
+});
+
+$("startButton").addEventListener("click", () => {
+  $("geometryCard").scrollIntoView({
+    behavior: "smooth"
+  });
+});
+
+$("newAnalysis").addEventListener("click", () => {
+  selectSection("C");
+});
+
+$("examples").addEventListener("click", () => {
+  $("height").value = 60;
+  $("width").value = 100;
+  $("thickness").value = 2;
+  $("magnitude").value = 10;
+  selectSection("C");
+});
+
+drawSection();
+</script>
+
 </body>
 </html>
