@@ -1,173 +1,131 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Solid Mechanics Analyzer | Shear Center & Torsion</title>
-  
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Google Fonts -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#080e18" />
+  <title>MECHMIND 3D — Solid Mechanics Workspace</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  
-  <!-- Chart.js & Three.js Libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  
-  <link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script type="module" src="app.js"></script>
 </head>
 <body>
-  <div class="app-container">
-    
-    <!-- Sidebar / Control Panel -->
-    <aside class="sidebar">
-      <div class="brand">
-        <i class="fa-solid fa-cubes-stacked brand-icon"></i>
-        <div>
-          <h1>MechLab 3D</h1>
-          <p>Shear Center & Stress Engine</p>
-        </div>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#overview" aria-label="MECHMIND 3D home">
+        <span class="brand-icon">M<span>3</span></span>
+        <span class="brand-copy"><strong>MECHMIND <b>3D</b></strong><small>MECHANICS WORKSPACE</small></span>
+      </a>
+      <div class="top-center"><span class="status-led"></span><span>LOCAL ANALYTICAL SESSION</span><span class="top-divider"></span><span id="projectNameTop">Untitled project</span></div>
+      <div class="top-actions">
+        <button class="icon-btn" id="saveProjectBtn" title="Save project JSON">↓</button>
+        <button class="icon-btn" id="loadProjectBtn" title="Load project JSON">↑</button>
+        <button class="user-chip" id="helpBtn"><span>?</span> Guide</button>
+        <input type="file" id="projectFile" accept=".json,application/json" hidden>
       </div>
+    </header>
 
-      <!-- Cross Section Selection -->
-      <section class="panel-section">
-        <h2><i class="fa-solid fa-shapes"></i> Profile Geometry</h2>
-        <div class="form-group">
-          <label for="profileType">Section Profile</label>
-          <select id="profileType" class="form-control">
-            <option value="c-channel">C-Channel (Unsymmetric)</option>
-            <option value="hollow-rect">Hollow Rectangular / Box</option>
-            <option value="pipe">Hollow Circular Pipe</option>
-            <option value="i-beam">I-Beam (Symmetric)</option>
-          </select>
-        </div>
+    <div class="main-layout">
+      <aside class="sidebar">
+        <div class="side-label">WORKSPACE</div>
+        <button class="nav-item active" data-view="overview"><span class="nav-icon">⌂</span><span>Overview</span><kbd>01</kbd></button>
+        <button class="nav-item" data-view="geometry"><span class="nav-icon">◇</span><span>Geometry</span><kbd>02</kbd></button>
+        <button class="nav-item" data-view="mechanics"><span class="nav-icon">∑</span><span>Mechanics lab</span><kbd>03</kbd></button>
+        <button class="nav-item" data-view="materials"><span class="nav-icon">▦</span><span>Materials</span><kbd>04</kbd></button>
+        <button class="nav-item" data-view="photo"><span class="nav-icon">▧</span><span>Photo scale</span><kbd>05</kbd></button>
+        <button class="nav-item" data-view="reports"><span class="nav-icon">▤</span><span>Reports</span><kbd>06</kbd></button>
+        <div class="side-spacer"></div>
+        <div class="sidebar-card"><div class="sidebar-card-icon">⌁</div><b>Engineering first.</b><p>Every result is tied to a stated model and its assumptions.</p><span class="mini-tag">EDUCATIONAL TOOL</span></div>
+        <div class="sidebar-foot">BUILD <b>0.2.0</b><span>·</span> FRONTEND PROTOTYPE</div>
+      </aside>
 
-        <div id="dimControls" class="dim-grid">
-          <!-- Dynamic dimension inputs inserted by index.js -->
-        </div>
-      </section>
+      <main class="content" id="overview">
+        <section class="page-heading">
+          <div><div class="eyebrow"><span class="eyebrow-line"></span> SOLID MECHANICS / DIGITAL LAB</div><h1>Design. Analyse. <em>Understand.</em></h1><p>Explore how geometry, material and loading govern structural response.</p></div>
+          <div class="heading-right"><span class="project-status"><i></i> MODEL READY</span><button class="btn btn-outline" id="resetBtn">↺ Reset model</button></div>
+        </section>
 
-      <!-- Material Properties -->
-      <section class="panel-section">
-        <h2><i class="fa-solid fa-atom"></i> Material Settings</h2>
-        <div class="form-group">
-          <label for="matPreset">Material Preset</label>
-          <select id="matPreset" class="form-control">
-            <option value="steel">Structural Steel (E=200GPa, G=77GPa)</option>
-            <option value="aluminum">Aluminum 6061-T6 (E=69GPa, G=26GPa)</option>
-            <option value="titanium">Titanium Ti-6Al-4V (E=114GPa, G=44GPa)</option>
-            <option value="custom">Custom Parameters</option>
-          </select>
-        </div>
+        <section class="workflow" aria-label="Analysis workflow">
+          <div class="workflow-step active"><span>01</span><b>Create</b></div><i></i><div class="workflow-step active"><span>02</span><b>Configure</b></div><i></i><div class="workflow-step active"><span>03</span><b>Load</b></div><i></i><div class="workflow-step active"><span>04</span><b>Analyse</b></div><i></i><div class="workflow-step"><span>05</span><b>Inspect</b></div><i></i><div class="workflow-step"><span>06</span><b>Predict</b></div>
+        </section>
 
-        <div class="input-row">
-          <div class="form-group">
-            <label for="youngsMod">E (GPa)</label>
-            <input type="number" id="youngsMod" class="form-control" value="200" step="1">
-          </div>
-          <div class="form-group">
-            <label for="shearMod">G (GPa)</label>
-            <input type="number" id="shearMod" class="form-control" value="77" step="1">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="yieldStrength">Yield Strength $\sigma_y$ (MPa)</label>
-          <input type="number" id="yieldStrength" class="form-control" value="250" step="5">
-        </div>
-      </section>
+        <section class="dashboard-grid">
+          <aside class="panel setup-panel">
+            <div class="panel-head"><div><span class="section-kicker">MODEL DEFINITION</span><h2>Setup</h2></div><span class="step-count">01 — 03</span></div>
+            <div class="control-section">
+              <div class="control-title"><span class="number">01</span><b>Structure</b></div>
+              <label for="preset">Example model</label>
+              <select id="preset">
+                <option value="cantilever">Hollow cantilever tube</option>
+                <option value="shaft">Solid circular shaft</option>
+                <option value="thin">Thin-wall circular tube</option>
+              </select>
+              <label for="length">Member length <span>m</span></label>
+              <input id="length" type="number" min="0.05" step="0.05" value="1.20">
+              <div class="two-col">
+                <div><label for="outerD">Outer diameter <span>mm</span></label><input id="outerD" type="number" min="1" step="1" value="60"></div>
+                <div><label for="innerD">Inner diameter <span>mm</span></label><input id="innerD" type="number" min="0" step="1" value="45"></div>
+              </div>
+              <div class="geometry-readout"><span>Wall thickness</span><b id="wallThickness">7.50 mm</b></div>
+            </div>
+            <div class="control-section">
+              <div class="control-title"><span class="number">02</span><b>Material</b><button class="text-link" data-open="materials">Library ↗</button></div>
+              <label for="material">Material preset</label>
+              <select id="material"><option value="steel">Structural steel · typical</option><option value="aluminium">Aluminium alloy · typical</option><option value="titanium">Titanium alloy · typical</option><option value="custom">Custom material</option></select>
+              <div class="material-summary"><div class="material-swatch"></div><div><b id="materialName">Structural steel</b><small id="materialProps">E 200 GPa · σᵧ 250 MPa · ρ 7850 kg/m³</small></div></div>
+              <div id="customMaterial" class="custom-fields hidden"><div class="two-col"><div><label for="customE">Young's modulus <span>GPa</span></label><input id="customE" type="number" value="200"></div><div><label for="customYield">Yield strength <span>MPa</span></label><input id="customYield" type="number" value="250"></div></div><div class="two-col"><div><label for="customNu">Poisson ratio</label><input id="customNu" type="number" min="0" max="0.49" step="0.01" value="0.30"></div><div><label for="customDensity">Density <span>kg/m³</span></label><input id="customDensity" type="number" value="7850"></div></div></div>
+            </div>
+            <div class="control-section">
+              <div class="control-title"><span class="number">03</span><b>Boundary & loads</b></div>
+              <label for="support">Support condition</label><select id="support"><option value="fixed">Fixed at left · cantilever</option><option value="simply">Simply supported · centre load</option></select>
+              <div class="two-col"><div><label for="force">Transverse force <span>N</span></label><input id="force" type="number" step="10" value="800"></div><div><label for="axial">Axial force <span>N</span></label><input id="axial" type="number" step="10" value="0"></div></div>
+              <div class="two-col"><div><label for="eccentricity">Eccentricity <span>mm · z</span></label><input id="eccentricity" type="number" step="1" value="8"></div><div><label for="torque">Applied torque <span>N·m</span></label><input id="torque" type="number" step="1" value="15"></div></div>
+              <label for="probe">Probe location <span id="probePct">100%</span></label><input id="probe" class="range" type="range" min="0" max="100" value="100">
+              <div class="range-captions"><span>Support</span><span>Free end</span></div>
+            </div>
+            <button class="btn btn-primary full" id="analyseBtn">Run analysis <span>↗</span></button>
+            <p class="panel-footnote">SI units are used internally. Values are recalculated from the current inputs.</p>
+          </aside>
 
-      <!-- Loading & Beam Setup -->
-      <section class="panel-section">
-        <h2><i class="fa-solid fa-weight-hanging"></i> Beam & Loading</h2>
-        <div class="form-group">
-          <label for="beamLength">Beam Length $L$ (m)</label>
-          <input type="number" id="beamLength" class="form-control" value="2.0" step="0.1" min="0.5" max="10">
-        </div>
-        <div class="form-group">
-          <label for="shearForce">Point Load $V_y$ (kN)</label>
-          <input type="number" id="shearForce" class="form-control" value="15" step="1">
-        </div>
-        <div class="form-group">
-          <label for="loadEccentricity">Load Offset $e$ (mm)</label>
-          <div class="range-wrapper">
-            <input type="range" id="loadEccentricity" min="-150" max="150" value="0" class="range-slider">
-            <span id="eccentricityVal" class="range-badge">0 mm</span>
-          </div>
-          <small class="help-text">Align with Shear Center ($e_{sc}$) to avoid torsion.</small>
-        </div>
-      </section>
-    </aside>
+          <section class="panel viewport-panel">
+            <div class="panel-head viewport-head"><div><span class="section-kicker">LIVE 3D ENVIRONMENT</span><h2 id="viewportTitle">Hollow cantilever tube</h2></div><div class="viewport-actions"><button class="view-toggle active" data-render="solid">Solid</button><button class="view-toggle" data-render="wire">Wire</button><button class="view-toggle" data-render="transparent">X-ray</button></div></div>
+            <div class="viewport-wrap"><div id="viewport" aria-label="Interactive three-dimensional model"></div><div class="viewport-overlay top-left"><span class="live-dot"></span> LIVE MODEL <span class="overlay-divider">/</span> METRIC</div><div class="viewport-overlay top-right"><button class="camera-btn" data-camera="iso">ISO</button><button class="camera-btn" data-camera="front">FRONT</button><button class="camera-btn" data-camera="top">TOP</button></div><div class="viewport-overlay bottom-left"><span class="axis-key x-key">X</span><span class="axis-key y-key">Y</span><span class="axis-key z-key">Z</span><span class="orientation-note">Drag to orbit · Scroll to zoom · Right-drag to pan</span></div><div class="viewport-overlay bottom-right"><span class="scale-label">MODEL SCALE</span><b id="modelScale">1.20 m</b></div></div>
+            <div class="viewport-legend"><span><i class="legend-material"></i> Material</span><span><i class="legend-load"></i> Applied load</span><span><i class="legend-support"></i> Fixed support</span><span class="legend-hint">Deformation is magnified for visibility</span></div>
+            <div class="kpi-row"><div class="kpi"><span>PEAK BENDING STRESS</span><b id="kpiStress">—</b><small id="kpiStressSub">Outer fibre</small></div><div class="kpi"><span>TIP DEFLECTION</span><b id="kpiDeflection">—</b><small>Linear elastic estimate</small></div><div class="kpi"><span>ANGLE OF TWIST</span><b id="kpiTwist">—</b><small>Saint-Venant · circular</small></div><div class="kpi"><span>FACTOR OF SAFETY</span><b id="kpiFos">—</b><small>Von Mises · yield check</small></div></div>
+          </section>
 
-    <!-- Main Workspace -->
-    <main class="viewport-area">
-      
-      <!-- Top Metrics Dashboard -->
-      <header class="top-metrics">
-        <div class="metric-card">
-          <span class="metric-title">Shear Center $e_{sc}$</span>
-          <span class="metric-value" id="resShearCenter">0.0 mm</span>
-          <span class="metric-sub">From Web Axis</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-title">Twist Angle $\theta$</span>
-          <span class="metric-value highlight-cyan" id="resTwistAngle">0.000°</span>
-          <span class="metric-sub">End Rotation</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-title">Max Bending Moment</span>
-          <span class="metric-value" id="resBendingMoment">0.00 kNm</span>
-          <span class="metric-sub">At Fixed Support</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-title">Von Mises Stress</span>
-          <span class="metric-value highlight-amber" id="resVonMises">0.0 MPa</span>
-          <span class="metric-sub" id="resFOS">FoS: --</span>
-        </div>
-      </header>
+          <aside class="panel results-panel">
+            <div class="panel-head"><div><span class="section-kicker">SOLVER OUTPUT</span><h2>Results</h2></div><span class="result-live"><i></i> CURRENT</span></div>
+            <div class="result-group"><div class="result-heading">SECTION PROPERTIES <span>GEOMETRY</span></div><div class="result-line"><span>Cross-sectional area</span><b id="resArea">—</b></div><div class="result-line"><span>Second moment, I</span><b id="resI">—</b></div><div class="result-line"><span>Polar moment, J</span><b id="resJ">—</b></div><div class="result-line"><span>Mass per unit length</span><b id="resMass">—</b></div></div>
+            <div class="result-group"><div class="result-heading">AT PROBE LOCATION <span id="probeLocation">x = 1.20 m</span></div><div class="result-line"><span>Bending moment</span><b id="resMoment">—</b></div><div class="result-line"><span>Axial normal stress</span><b id="resAxial">—</b></div><div class="result-line"><span>Bending normal stress</span><b id="resBending">—</b></div><div class="result-line"><span>Torsional shear stress</span><b id="resShear">—</b></div><div class="result-line"><span>Normal strain</span><b id="resStrain">—</b></div><div class="result-line"><span>Deflection at probe</span><b id="resDisp">—</b></div><div class="result-line"><span>Twist at probe</span><b id="resAngle">—</b></div></div>
+            <div class="safety-box"><div><span>VON MISES YIELD CHECK</span><b id="yieldValue">—</b></div><span class="safety-pill" id="yieldStatus">NOT RUN</span></div>
+            <p class="result-note" id="resultNote">Run the analysis to populate calculated outputs.</p>
+          </aside>
+        </section>
 
-      <!-- 3D Visualization Container -->
-      <div class="canvas-wrapper">
-        <div id="threeCanvas"></div>
+        <section class="analysis-grid">
+          <article class="panel chart-panel"><div class="panel-head"><div><span class="section-kicker">STRUCTURAL RESPONSE</span><h2>Beam response</h2></div><select id="chartMode" class="compact-select"><option value="deflection">Deflection · mm</option><option value="moment">Bending moment · N·m</option><option value="stress">Bending stress · MPa</option></select></div><canvas id="responseChart" height="180"></canvas><div class="chart-caption"><span><i class="chart-key"></i><b id="chartCaption">Calculated response along member</b></span><small>Analytical beam model · 41 stations</small></div></article>
+          <article class="panel formula-panel"><div class="panel-head"><div><span class="section-kicker">CALCULATION TRACE</span><h2>Show the mathematics</h2></div><button class="text-link" id="mathToggle">Collapse −</button></div><div id="mathBody" class="math-list"><div><b>Hollow circular area</b><code>A = π/4 (Dₒ² − Dᵢ²)</code></div><div><b>Second moment of area</b><code>I = π/64 (Dₒ⁴ − Dᵢ⁴)</code></div><div><b>Bending stress</b><code>σᵦ = Mc / I</code></div><div><b>Circular torsion</b><code>τ = Tc / J &nbsp; · &nbsp; θ = TL / GJ</code></div><div><b>Von Mises estimate</b><code>σᵥₘ = √(σ² + 3τ²)</code></div><div class="substitution" id="substitution">Run analysis to see your model values substituted into the equations.</div></div></article>
+        </section>
 
-        <!-- Floating Controls / Visual Legend -->
-        <div class="canvas-overlay top-right">
-          <button id="toggleDeform" class="btn-tool"><i class="fa-solid fa-wave-square"></i> Toggle Deformation</button>
-          <button id="resetView" class="btn-tool"><i class="fa-solid fa-compress"></i> Reset Camera</button>
-        </div>
+        <section class="bottom-grid">
+          <article class="panel inspector-panel"><div class="panel-head"><div><span class="section-kicker">POINT PROBE</span><h2>Inspect a location</h2></div><span class="inspect-tag">ANALYTICAL FIELD</span></div><div class="inspector-content"><div class="probe-visual"><div class="probe-cross"><span class="cross-circle"></span><span class="cross-center"></span><span class="cross-label top">+y</span><span class="cross-label right">+z</span></div><div><b>Outer-fibre probe</b><p>Current beam station and section-edge estimate.</p></div></div><div class="probe-values"><div><small>LONGITUDINAL STRESS</small><b id="probeStress">—</b></div><div><small>STRAIN εₓ</small><b id="probeStrain">—</b></div><div><small>DISPLACEMENT</small><b id="probeDisplacement">—</b></div></div></div></article>
+          <article class="panel prediction-panel"><div class="panel-head"><div><span class="section-kicker">FAILURE & LIFE LAB</span><h2>Prediction status</h2></div><span class="inspect-tag">STATIC CHECK</span></div><div class="prediction-content"><div class="prediction-icon">◎</div><div><b id="predictionTitle">Awaiting analysis</b><p id="predictionText">Static yield screening will appear after a successful calculation. Fatigue and creep require suitable material data and validated models.</p></div></div><div class="prediction-foot"><span>FATIGUE LIFE</span><b>Insufficient S–N data</b><span class="disabled-chip">NOT ESTIMATED</span></div></article>
+        </section>
 
-        <div class="canvas-overlay bottom-left color-legend">
-          <span class="legend-label">von Mises Stress Gradient</span>
-          <div class="gradient-bar"></div>
-          <div class="legend-ticks">
-            <span>0 MPa</span>
-            <span id="legendMaxStress">Max Stress</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bottom Bending Moment / Stress Charts Section -->
-      <section class="charts-section">
-        <div class="chart-card">
-          <h3><i class="fa-solid fa-chart-line"></i> Internal Bending Moment Diagram $M(x)$</h3>
-          <div class="chart-container">
-            <canvas id="bmdChart"></canvas>
-          </div>
-        </div>
-        <div class="chart-card">
-          <h3><i class="fa-solid fa-chart-area"></i> Torsional Twist Profile $\theta(x)$</h3>
-          <div class="chart-container">
-            <canvas id="twistChart"></canvas>
-          </div>
-        </div>
-      </section>
-
-    </main>
+        <footer class="footer"><span>MECHMIND 3D <b>·</b> EDUCATIONAL ENGINEERING TOOL</span><span>Analytical model only · Not a certified design system</span></footer>
+      </main>
+    </div>
   </div>
 
-  <script src="index.js"></script>
+  <div class="modal-backdrop hidden" id="mohrModal"><section class="modal modal-wide"><div class="modal-head"><div><span class="section-kicker">MECHANICS LAB / 01</span><h2>Stress transformation & Mohr's circle</h2></div><button class="close-modal" data-close="mohrModal">×</button></div><div class="modal-grid"><div class="modal-controls"><p class="modal-intro">Enter a plane-stress state. The lab calculates principal stresses, maximum in-plane shear and the orientation of principal planes.</p><label for="sigmaX">σₓ <span>MPa</span></label><input id="sigmaX" type="number" value="80"><label for="sigmaY">σᵧ <span>MPa</span></label><input id="sigmaY" type="number" value="20"><label for="tauXY">τₓᵧ <span>MPa</span></label><input id="tauXY" type="number" value="30"><label for="thetaStress">Rotation angle θ <span>degrees</span></label><input id="thetaStress" type="number" value="30"><button class="btn btn-primary full" id="mohrCalc">Calculate transformation</button></div><div class="mohr-results"><canvas id="mohrCanvas" width="520" height="300"></canvas><div class="mohr-kpis"><div><small>σ₁</small><b id="principal1">—</b></div><div><small>σ₂</small><b id="principal2">—</b></div><div><small>τ MAX (IN-PLANE)</small><b id="maxShear">—</b></div><div><small>θₚ</small><b id="principalAngle">—</b></div></div><div class="transformed-state" id="transformedState">Enter values and calculate the transformed stress state.</div></div></div></section></div>
+
+  <div class="modal-backdrop hidden" id="photoModal"><section class="modal"><div class="modal-head"><div><span class="section-kicker">GEOMETRY INPUT / IMAGE REFERENCE</span><h2>Photo scale calibration</h2></div><button class="close-modal" data-close="photoModal">×</button></div><p class="modal-intro">Upload a reference photograph and enter a known real-world dimension. This tool calculates a pixel scale only; it does not infer hidden geometry or create an engineering-grade 3D model.</p><label class="upload-zone" for="photoFile"><span>＋</span><b>Choose a reference image</b><small>PNG, JPG or WEBP</small><input type="file" id="photoFile" accept="image/*" hidden></label><div id="photoPreviewWrap" class="photo-preview-wrap hidden"><img id="photoPreview" alt="Uploaded mechanical component reference"><div class="photo-scale-controls"><div><label for="knownLength">Known dimension <span>mm</span></label><input id="knownLength" type="number" min="0.01" value="100"></div><div><label for="pixelLength">Measured pixel distance <span>px</span></label><input id="pixelLength" type="number" min="1" value="250"></div></div><div class="calibration-result" id="calibrationResult">Scale not calculated.</div></div></section></div>
+
+  <div class="modal-backdrop hidden" id="guideModal"><section class="modal"><div class="modal-head"><div><span class="section-kicker">QUICK START</span><h2>Using MECHMIND 3D</h2></div><button class="close-modal" data-close="guideModal">×</button></div><ol class="guide-list"><li><b>Configure geometry.</b><span>Set member length and circular section dimensions. Inner diameter must be smaller than outer diameter.</span></li><li><b>Choose a material.</b><span>Material presets are representative values. Use verified grade-specific data for real design.</span></li><li><b>Apply loads.</b><span>Transverse force, axial force, eccentricity and torque are defined in the setup panel.</span></li><li><b>Run analysis.</b><span>Review the beam response, stress, strain, deflection, twist and static yield screen.</span></li><li><b>Explore the Mechanics Lab.</b><span>Use Mohr's circle to transform a 2D plane-stress state.</span></li><li><b>Save or export.</b><span>Save a project JSON or print the results page to PDF.</span></li></ol><div class="warning-note">This is an educational analytical prototype. It is not a finite-element solver, and it does not certify structural safety.</div></section></div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
