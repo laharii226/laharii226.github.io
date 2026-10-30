@@ -3,159 +3,148 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TENSOR | Shear Centre Studio</title>
+<title>TENSOR — Shear Centre Studio</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --navy: #17213a;
-  --purple: #635bff;
-  --lavender: #eeedff;
-  --background: #f5f7fc;
-  --border: #e0e6f1;
-  --text: #202b45;
-  --muted: #75819b;
+  --ink: #24243b;
+  --muted: #77778d;
+  --paper: #f8f7f4;
+  --white: #fff;
+  --purple: #6558d9;
+  --purple-light: #eeebff;
+  --orange: #e88c61;
+  --border: #e8e5ed;
+  --green: #23866a;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
-  background: var(--background);
-  color: var(--text);
-  font-family: Inter, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "DM Sans", sans-serif;
 }
 
-button, input, select {
-  font: inherit;
-}
+button, input, select { font: inherit; }
+button { cursor: pointer; }
 
-button {
-  cursor: pointer;
-}
-
-header {
-  height: 70px;
-  padding: 0 28px;
-  background: var(--navy);
-  color: white;
+.topbar {
+  height: 72px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 0 30px;
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
 }
 
-.logo {
-  font-family: "Space Grotesk", sans-serif;
-  font-size: 27px;
+.brand {
+  font: 800 25px "Manrope", sans-serif;
+  letter-spacing: 4px;
+}
+
+.brand span { color: var(--purple); }
+
+.top-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.badge {
+  background: #e5f5ed;
+  color: #247c5c;
+  padding: 7px 11px;
+  border-radius: 20px;
   font-weight: 700;
-  letter-spacing: 5px;
 }
 
-.logo span {
-  color: #a9a4ff;
-}
-
-header small {
-  color: #c4cce0;
-}
-
-.layout {
+.app {
   display: grid;
-  grid-template-columns: 215px minmax(0, 1fr);
-  min-height: calc(100vh - 70px);
+  grid-template-columns: 225px minmax(0, 1fr);
+  min-height: calc(100vh - 72px);
 }
 
 .sidebar {
-  background: var(--navy);
-  padding: 20px 12px;
+  background: #29283f;
   color: white;
+  padding: 24px 14px;
 }
 
-.nav {
+.side-label {
+  color: #a8a6be;
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  margin: 22px 12px 10px;
+}
+
+.side-btn {
   display: block;
   width: 100%;
-  text-align: left;
-  padding: 13px;
-  margin-bottom: 5px;
-  background: transparent;
+  padding: 12px;
   border: 0;
   border-radius: 8px;
-  color: #d7deef;
+  background: transparent;
+  color: #dedcec;
+  text-align: left;
+  margin-bottom: 5px;
 }
 
-.nav:hover, .nav.active {
-  background: #393d82;
+.side-btn:hover, .side-btn.active {
+  background: #48436e;
   color: white;
-}
-
-.sidebar h4 {
-  margin: 25px 12px 10px;
-  color: #929fba;
-  font-size: 11px;
-  letter-spacing: 1px;
 }
 
 main {
-  padding: 22px;
   min-width: 0;
+  padding: 27px;
 }
 
 .hero {
-  background: linear-gradient(115deg, #e9eaff, #dceaff, #f9faff);
-  border: 1px solid #dce3ff;
+  padding: 27px 30px;
   border-radius: 15px;
-  padding: 30px;
-  margin-bottom: 18px;
+  background: linear-gradient(115deg, #eeebff, #f9eade);
+  border: 1px solid #e7def4;
+  margin-bottom: 22px;
 }
 
 .eyebrow {
-  color: #655be9;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 2px;
+  color: var(--purple);
 }
 
 .hero h1 {
-  font: 700 38px "Space Grotesk", sans-serif;
-  margin: 12px 0;
+  font: 800 clamp(27px, 4vw, 39px) "Manrope", sans-serif;
+  margin: 12px 0 8px;
 }
 
 .hero p {
-  max-width: 620px;
+  color: #67647e;
+  max-width: 640px;
   line-height: 1.7;
-  color: #56627d;
+  font-size: 13px;
 }
 
-.primary {
-  background: var(--purple);
-  color: white;
-  border: 0;
-  border-radius: 8px;
-  padding: 12px 17px;
-  font-weight: 600;
-}
-
-.secondary {
-  background: white;
-  border: 1px solid var(--border);
-  color: var(--text);
-  border-radius: 8px;
-  padding: 11px 15px;
-}
-
-.workspace {
+.grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(280px, .8fr);
-  gap: 16px;
+  grid-template-columns: minmax(0, 1.3fr) minmax(290px, .8fr);
+  gap: 18px;
   align-items: start;
 }
 
 .stack {
   display: grid;
-  gap: 16px;
+  gap: 18px;
+  min-width: 0;
 }
 
 .card {
@@ -163,396 +152,361 @@ main {
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 6px 22px #26365a08;
 }
 
-.card h2 {
-  font: 600 16px "Space Grotesk", sans-serif;
+.card-head {
+  padding: 17px 19px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-head h2 {
+  font: 700 15px "Manrope", sans-serif;
   margin: 0;
 }
 
-.card-title {
-  padding: 16px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.step { color: var(--purple); margin-right: 8px; }
+
+.small-label {
+  color: var(--muted);
+  font-size: 11px;
 }
 
-.number {
-  color: var(--purple);
-  margin-right: 8px;
-}
-
-.toolbar {
+.tools {
   display: flex;
-  gap: 7px;
   flex-wrap: wrap;
-  padding: 12px;
+  gap: 7px;
+  padding: 13px;
 }
 
 .tool {
-  padding: 9px 11px;
   border: 1px solid var(--border);
-  border-radius: 7px;
   background: white;
-  color: #53617c;
-  font-size: 12px;
+  color: #62617a;
+  border-radius: 7px;
+  padding: 9px 11px;
+  font-size: 11px;
 }
 
 .tool.active {
-  background: var(--lavender);
-  border-color: #a8a1ff;
-  color: #5148e8;
+  background: var(--purple-light);
+  color: var(--purple);
+  border-color: #c6c0ff;
 }
 
-.canvas {
-  margin: 0 12px;
-  height: 350px;
+.drawing {
+  margin: 0 13px;
+  height: 340px;
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
-  background: #fcfdff;
+  background: #fdfcff;
 }
 
-.canvas svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  touch-action: none;
-}
+svg { width: 100%; height: 100%; display: block; }
 
-.canvas-footer {
+.drawing-footer {
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
   align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
-  padding: 12px;
+  gap: 10px;
+  padding: 13px;
+  font-size: 11px;
+  color: var(--muted);
 }
 
-.form-grid {
+.form {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 13px;
-  padding: 16px;
+  gap: 14px;
+  padding: 17px;
 }
 
 .field {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 7px;
+  min-width: 0;
 }
 
+.field.full { grid-column: 1 / -1; }
+
 .field label {
-  color: #64718c;
-  font-size: 12px;
-  font-weight: 600;
+  color: #74738a;
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .field input, .field select {
+  min-width: 0;
   width: 100%;
   padding: 11px;
   border: 1px solid var(--border);
   border-radius: 7px;
   background: white;
-  color: var(--text);
+  color: var(--ink);
+  outline: none;
 }
 
-.full {
-  grid-column: 1 / -1;
-}
-
-.segmented {
-  display: flex;
-  gap: 7px;
-}
-
-.segmented button {
-  flex: 1;
-  padding: 10px 5px;
-  border: 1px solid var(--border);
-  background: white;
-  border-radius: 7px;
-  color: #63708b;
-  font-size: 11px;
-}
-
-.segmented button.selected {
+.field input:focus, .field select:focus {
   border-color: var(--purple);
-  background: var(--lavender);
-  color: #5148e8;
 }
 
-.section-grid {
+.btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 12px 15px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.primary { background: var(--purple); color: white; }
+.secondary { background: white; color: var(--ink); border: 1px solid var(--border); }
+
+.full-btn {
+  width: calc(100% - 34px);
+  margin: 0 17px 17px;
+}
+
+.presets {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 9px;
-  padding: 14px;
-}
-
-.section {
-  padding: 15px 5px;
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  color: #34425e;
-}
-
-.section strong {
-  display: block;
-  color: var(--purple);
-  font-size: 25px;
-  margin-bottom: 7px;
-}
-
-.section span {
-  font-size: 11px;
-}
-
-.section.selected {
-  border-color: var(--purple);
-  background: var(--lavender);
-}
-
-.results {
   padding: 15px;
 }
 
+.preset {
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 8px;
+  padding: 13px 5px;
+  color: var(--ink);
+}
+
+.preset strong {
+  display: block;
+  font: 700 25px "Manrope", sans-serif;
+  color: var(--purple);
+  margin-bottom: 5px;
+}
+
+.preset span { font-size: 10px; }
+
+.preset.active {
+  border-color: var(--purple);
+  background: var(--purple-light);
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 15px;
+}
+
+.metric {
+  background: #f8f7fc;
+  border-radius: 9px;
+  padding: 13px;
+  min-width: 0;
+}
+
+.metric span {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.metric strong {
+  display: block;
+  font: 700 18px "Manrope", sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.result-list { padding: 0 16px 15px; }
+
 .result-row {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid #e3e9f2;
-  font-size: 12px;
+  gap: 10px;
+  font-size: 11px;
 }
 
-.result-row span {
-  color: var(--muted);
-}
-
-.result-row strong {
-  text-align: right;
-}
+.result-row span { color: var(--muted); }
+.result-row strong { text-align: right; }
 
 .notice {
+  margin: 15px;
   padding: 12px;
-  border: 1px solid #f1dfad;
-  background: #fff8e8;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.7;
-  color: #775c23;
-  margin-bottom: 12px;
 }
 
-.wide {
-  width: calc(100% - 30px);
-  margin: 0 15px 15px;
+.notice.warning {
+  background: #fff5e9;
+  border: 1px solid #f0ddbf;
+  color: #77552d;
+}
+
+.notice.success {
+  background: #eaf7f0;
+  border: 1px solid #c7e7d6;
+  color: #246b50;
 }
 
 footer {
-  margin-top: 22px;
-  padding: 16px 0;
   display: flex;
   justify-content: space-between;
   gap: 10px;
   flex-wrap: wrap;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 10px;
+  padding: 22px 0 5px;
 }
 
-@media (max-width: 950px) {
-  .workspace {
-    grid-template-columns: 1fr;
-  }
-
-  .sidebar {
-    display: none;
-  }
-
-  .layout {
-    grid-template-columns: 1fr;
-  }
+@media(max-width: 1000px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .grid { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 550px) {
-  header {
-    padding: 0 14px;
-  }
-
-  header small {
-    display: none;
-  }
-
-  main {
-    padding: 12px;
-  }
-
-  .hero {
-    padding: 20px;
-  }
-
-  .hero h1 {
-    font-size: 29px;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .full {
-    grid-column: auto;
-  }
-
-  .canvas {
-    height: 290px;
-  }
+@media(max-width: 580px) {
+  main { padding: 12px; }
+  .topbar { padding: 0 15px; }
+  .top-right { font-size: 10px; }
+  .hero { padding: 21px; }
+  .form { grid-template-columns: 1fr; }
+  .field.full { grid-column: auto; }
+  .drawing { height: 280px; }
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <div class="logo">T<span>◆</span> TENSOR</div>
-  <small>Design · Analyse · Understand</small>
+<header class="topbar">
+  <div class="brand">T<span>◆</span> TENSOR</div>
+  <div class="top-right">
+    <span>Solid Mechanics Studio</span>
+    <span class="badge">BETA</span>
+  </div>
 </header>
 
-<div class="layout">
+<div class="app">
 
 <aside class="sidebar">
-  <button class="nav active" data-page="home">⌂ &nbsp; Home</button>
-  <button class="nav" id="newAnalysis">＋ &nbsp; New Analysis</button>
-  <button class="nav" id="examples">▦ &nbsp; Examples</button>
+  <div class="side-label">WORKSPACE</div>
+  <button class="side-btn active" id="homeBtn">⌂ &nbsp; Design Studio</button>
+  <button class="side-btn" id="resetBtn">↺ &nbsp; New Model</button>
+  <button class="side-btn" id="exportBtn">↓ &nbsp; Export Model</button>
 
-  <h4>SECTION PRESETS</h4>
-
-  <button class="nav" data-section="C">C-section</button>
-  <button class="nav" data-section="I">I-section</button>
-  <button class="nav" data-section="T">T-section</button>
-  <button class="nav" data-section="L">L-section</button>
-  <button class="nav" data-section="Box">Box section</button>
-  <button class="nav" data-section="Tube">Circular tube</button>
+  <div class="side-label">SECTION LIBRARY</div>
+  <button class="side-btn" data-preset="C">C-section</button>
+  <button class="side-btn" data-preset="I">I-section</button>
+  <button class="side-btn" data-preset="T">T-section</button>
+  <button class="side-btn" data-preset="L">L-section</button>
+  <button class="side-btn" data-preset="Z">Z-section</button>
+  <button class="side-btn" data-preset="Box">Box section</button>
 </aside>
 
 <main>
 
 <section class="hero">
-  <div class="eyebrow">INTERACTIVE SOLID MECHANICS</div>
-  <h1>Build. Load. Understand.</h1>
+  <div class="eyebrow">GEOMETRY · MATERIALS · MECHANICS</div>
+  <h1>Understand the force behind the form.</h1>
   <p>
-    Explore how cross-section geometry, material properties and
-    loading conditions influence thin-walled beam behaviour.
+    Create a cross-section, modify its dimensions, define material
+    properties and loading conditions, and inspect the calculated
+    geometric properties and supported beam response.
   </p>
-  <button class="primary" id="startButton">Start New Analysis →</button>
+  <button class="btn primary" id="startBtn">Open Design Studio →</button>
 </section>
 
-<div class="workspace">
+<div class="grid">
 
 <div class="stack">
 
-<section class="card" id="geometryCard">
-
-<div class="card-title">
-  <h2><span class="number">01</span> Geometry & Model</h2>
-  <span id="sectionLabel">C-SECTION</span>
-</div>
-
-<div class="toolbar">
-  <button class="tool active" data-tool="select">↖ Select</button>
-  <button class="tool" data-tool="line">╱ Line</button>
-  <button class="tool" data-tool="rect">□ Rectangle</button>
-  <button class="tool" data-tool="circle">○ Circle</button>
-  <button class="tool" id="undoButton">↶ Undo</button>
-  <button class="tool" id="clearButton">Clear</button>
-</div>
-
-<div class="canvas">
-<svg id="drawing" viewBox="0 0 700 350">
-  <defs>
-    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-      <path d="M 20 0 L 0 0 0 20"
-        fill="none" stroke="#e8edf7" stroke-width="1"/>
-    </pattern>
-  </defs>
-
-  <rect width="700" height="350" fill="url(#grid)"/>
-  <line x1="350" y1="0" x2="350" y2="350"
-    stroke="#cbd4e5" stroke-dasharray="5 5"/>
-  <line x1="0" y1="175" x2="700" y2="175"
-    stroke="#cbd4e5" stroke-dasharray="5 5"/>
-
-  <g id="sectionLayer"></g>
-  <g id="userLayer"></g>
-</svg>
-</div>
-
-<div class="canvas-footer">
-  <span style="font-size:12px;color:#75819b" id="drawStatus">
-    Select a drawing tool to sketch geometry
-  </span>
-  <button class="secondary" id="resetDrawing">Reset Section</button>
-</div>
-
-<div class="form-grid">
-  <div class="field">
-    <label for="height">Height (mm)</label>
-    <input id="height" type="number" min="1" value="60">
+<section class="card" id="editor">
+  <div class="card-head">
+    <h2><span class="step">01</span>Cross-section editor</h2>
+    <span class="small-label" id="sectionName">C-section</span>
   </div>
 
-  <div class="field">
-    <label for="width">Width (mm)</label>
-    <input id="width" type="number" min="1" value="100">
+  <div class="tools">
+    <button class="tool active" data-tool="select">Select</button>
+    <button class="tool" data-tool="line">Draw line</button>
+    <button class="tool" data-tool="rect">Rectangle</button>
+    <button class="tool" data-tool="circle">Circle</button>
+    <button class="tool" id="undoBtn">Undo</button>
+    <button class="tool" id="clearBtn">Clear sketch</button>
   </div>
 
-  <div class="field">
-    <label for="thickness">Thickness (mm)</label>
-    <input id="thickness" type="number" min="0.1" step="0.1" value="2">
+  <div class="drawing">
+    <svg id="canvas" viewBox="0 0 700 350" aria-label="Cross-section drawing canvas">
+      <defs>
+        <pattern id="gridPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M20 0H0V20" fill="none" stroke="#e9e6f0" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="700" height="350" fill="url(#gridPattern)"/>
+      <line x1="350" y1="0" x2="350" y2="350"
+        stroke="#cfc9e0" stroke-dasharray="5 5"/>
+      <line x1="0" y1="175" x2="700" y2="175"
+        stroke="#cfc9e0" stroke-dasharray="5 5"/>
+      <g id="presetLayer"></g>
+      <g id="sketchLayer"></g>
+    </svg>
   </div>
 
-  <div class="field">
-    <label for="length">Beam length (mm)</label>
-    <input id="length" type="number" min="1" value="500">
+  <div class="drawing-footer">
+    <span id="drawStatus">Choose a preset or select a drawing tool.</span>
+    <span>Units: mm</span>
   </div>
 
-  <div class="field full">
-    <button class="primary" id="applyDimensions">Apply Dimensions</button>
+  <div class="form">
+    <div class="field">
+      <label for="height">Height (mm)</label>
+      <input id="height" type="number" min="1" step="1" value="60">
+    </div>
+    <div class="field">
+      <label for="width">Width (mm)</label>
+      <input id="width" type="number" min="1" step="1" value="100">
+    </div>
+    <div class="field">
+      <label for="thickness">Wall thickness (mm)</label>
+      <input id="thickness" type="number" min="0.1" step="0.1" value="2">
+    </div>
+    <div class="field">
+      <label for="length">Beam length (mm)</label>
+      <input id="length" type="number" min="1" step="10" value="500">
+    </div>
+    <div class="field full">
+      <button class="btn primary" id="applyBtn">Apply dimensions</button>
+    </div>
   </div>
-</div>
-
 </section>
 
 <section class="card">
-  <div class="card-title">
-    <h2>Section Library</h2>
-    <span>Presets</span>
+  <div class="card-head">
+    <h2><span class="step">02</span>Section library</h2>
+    <span class="small-label">Presets</span>
   </div>
 
-  <div class="section-grid">
-    <button class="section selected" data-section="C">
-      <strong>⊏</strong><span>C-section</span>
-    </button>
-
-    <button class="section" data-section="I">
-      <strong>Ⅰ</strong><span>I-section</span>
-    </button>
-
-    <button class="section" data-section="T">
-      <strong>⊤</strong><span>T-section</span>
-    </button>
-
-    <button class="section" data-section="L">
-      <strong>⌞</strong><span>L-section</span>
-    </button>
-
-    <button class="section" data-section="Box">
-      <strong>▣</strong><span>Box section</span>
-    </button>
-
-    <button class="section" data-section="Tube">
-      <strong>◎</strong><span>Circular tube</span>
-    </button>
+  <div class="presets">
+    <button class="preset active" data-preset="C"><strong>⊏</strong><span>C-section</span></button>
+    <button class="preset" data-preset="I"><strong>Ⅰ</strong><span>I-section</span></button>
+    <button class="preset" data-preset="T"><strong>⊤</strong><span>T-section</span></button>
+    <button class="preset" data-preset="L"><strong>⌞</strong><span>L-section</span></button>
+    <button class="preset" data-preset="Z"><strong>Ƶ</strong><span>Z-section</span></button>
+    <button class="preset" data-preset="Box"><strong>▣</strong><span>Box section</span></button>
   </div>
 </section>
 
@@ -561,144 +515,127 @@ footer {
 <div class="stack">
 
 <section class="card">
-  <div class="card-title">
-    <h2><span class="number">02</span> Load & Material</h2>
+  <div class="card-head">
+    <h2><span class="step">03</span>Material & loading</h2>
   </div>
 
-  <div class="form-grid">
-
-    <div class="field full">
-      <label>Load Type</label>
-      <div class="segmented" id="loadTypes">
-        <button class="selected" data-load="Point Load">Point Load</button>
-        <button data-load="Distributed Load">Distributed</button>
-        <button data-load="Moment">Moment</button>
-      </div>
-    </div>
-
-    <div class="field">
-      <label for="magnitude">Magnitude</label>
-      <input id="magnitude" type="number" min="0" value="10">
-    </div>
-
-    <div class="field">
-      <label for="loadUnit">Unit</label>
-      <select id="loadUnit">
-        <option>kN</option>
-        <option>N</option>
-        <option>kN/m</option>
-        <option>N·m</option>
-      </select>
-    </div>
-
-    <div class="field full">
-      <label for="direction">Direction</label>
-      <select id="direction">
-        <option>Vertical (+y)</option>
-        <option>Vertical (-y)</option>
-        <option>Horizontal (+z)</option>
-        <option>Horizontal (-z)</option>
-      </select>
-    </div>
-
+  <div class="form">
     <div class="field full">
       <label for="material">Material</label>
       <select id="material">
         <option value="aluminium">Aluminium</option>
-        <option value="steel">Steel</option>
-        <option value="custom">Custom</option>
+        <option value="steel">Structural steel</option>
+        <option value="custom">Custom material</option>
       </select>
     </div>
 
     <div class="field">
-      <label for="youngs">Young's Modulus (GPa)</label>
-      <input id="youngs" type="number" min="0.01" value="69">
+      <label for="young">Young's modulus (GPa)</label>
+      <input id="young" type="number" min="0.001" step="1" value="69">
     </div>
 
     <div class="field">
-      <label for="shear">Shear Modulus (GPa)</label>
-      <input id="shear" type="number" min="0.01" value="26">
+      <label for="shear">Shear modulus (GPa)</label>
+      <input id="shear" type="number" min="0.001" step="1" value="26">
     </div>
 
     <div class="field full">
-      <label>Wall Model</label>
-      <div class="segmented" id="wallTypes">
-        <button class="selected" data-wall="Thin-walled">Thin-walled</button>
-        <button data-wall="Thick-walled">Thick-walled</button>
-      </div>
+      <label for="loadType">Load type</label>
+      <select id="loadType">
+        <option value="point">Cantilever tip point load</option>
+        <option value="distributed">Uniformly distributed load</option>
+        <option value="moment">End moment</option>
+      </select>
     </div>
 
+    <div class="field">
+      <label for="load">Load magnitude</label>
+      <input id="load" type="number" min="0" step="1" value="100">
+    </div>
+
+    <div class="field">
+      <label for="loadUnit">Load unit</label>
+      <select id="loadUnit">
+        <option value="N">N</option>
+        <option value="kN">kN</option>
+      </select>
+    </div>
+
+    <div class="field full">
+      <label for="loadPosition">Load application point, x (mm)</label>
+      <input id="loadPosition" type="number" min="0" value="500">
+    </div>
+
+    <div class="field full">
+      <label for="direction">Load direction</label>
+      <select id="direction">
+        <option value="vertical">Vertical</option>
+        <option value="horizontal">Horizontal</option>
+      </select>
+    </div>
+
+    <div class="field full">
+      <label for="wallType">Section model</label>
+      <select id="wallType">
+        <option value="thin">Thin-walled</option>
+        <option value="thick">Thick-walled</option>
+      </select>
+    </div>
   </div>
 </section>
 
 <section class="card">
-  <div class="card-title">
-    <h2><span class="number">03</span> Analysis Setup</h2>
+  <div class="card-head">
+    <h2><span class="step">04</span>Calculated properties</h2>
+    <span class="small-label" id="calcStatus">Ready</span>
   </div>
 
-  <div class="form-grid">
-    <label style="font-size:12px">
-      <input type="checkbox" id="compareLoad" checked>
-      Compare load magnitudes
-    </label>
-
-    <label style="font-size:12px">
-      <input type="checkbox" id="compareMaterial" checked>
-      Compare materials
-    </label>
-
-    <label style="font-size:12px" class="full">
-      <input type="checkbox" id="compareThickness">
-      Compare thickness
-    </label>
-  </div>
-
-  <button class="primary wide" id="runAnalysis">▶ &nbsp; Prepare Analysis</button>
-</section>
-
-<section class="card" id="resultsCard">
-  <div class="card-title">
-    <h2>Model Summary</h2>
-    <span id="status">SETUP</span>
-  </div>
-
-  <div class="results">
-    <div class="notice" id="notice">
-      <strong>Solver not connected.</strong><br>
-      This prototype collects inputs and displays section geometry.
-      It does not yet calculate verified shear-centre coordinates
-      or deformation.
+  <div class="metrics">
+    <div class="metric">
+      <span>Cross-sectional area</span>
+      <strong id="areaResult">—</strong>
     </div>
-
-    <div class="result-row">
-      <span>Section</span>
-      <strong id="outSection">C-section</strong>
+    <div class="metric">
+      <span>Centroid x</span>
+      <strong id="cxResult">—</strong>
     </div>
-
-    <div class="result-row">
-      <span>Height × Width</span>
-      <strong id="outDimensions">60 × 100 mm</strong>
+    <div class="metric">
+      <span>Centroid y</span>
+      <strong id="cyResult">—</strong>
     </div>
-
-    <div class="result-row">
-      <span>Thickness</span>
-      <strong id="outThickness">2 mm</strong>
-    </div>
-
-    <div class="result-row">
-      <span>Applied Load</span>
-      <strong id="outLoad">10 kN</strong>
-    </div>
-
-    <div class="result-row">
-      <span>Material E / G</span>
-      <strong id="outMaterial">69 / 26 GPa</strong>
+    <div class="metric">
+      <span>Second moment Ixx</span>
+      <strong id="ixResult">—</strong>
     </div>
   </div>
 
-  <button class="secondary wide" id="exportButton">
-    ↓ Export Model Inputs (.json)
-  </button>
+  <div class="result-list">
+    <div class="result-row">
+      <span>Second moment Iyy</span>
+      <strong id="iyResult">—</strong>
+    </div>
+    <div class="result-row">
+      <span>Load applied</span>
+      <strong id="loadResult">—</strong>
+    </div>
+    <div class="result-row">
+      <span>Estimated tip deflection</span>
+      <strong id="deflectionResult">—</strong>
+    </div>
+    <div class="result-row">
+      <span>Shear-centre coordinates</span>
+      <strong id="scResult">Not calculated</strong>
+    </div>
+  </div>
+
+  <div class="notice warning" id="resultNotice">
+    Geometric properties use a thin-wall centreline approximation.
+    Deflection is available only for the supported cantilever
+    beam model. The shear-centre solver is not implemented.
+  </div>
+
+  <button class="btn primary full-btn" id="calculateBtn">Recalculate model</button>
+  <button class="btn secondary full-btn" id="downloadBtn">Export model as JSON ↓</button>
 </section>
 
 </div>
@@ -706,7 +643,7 @@ footer {
 
 <footer>
   <span>TENSOR · Solid Mechanics Project</span>
-  <span>Small changes. Big insights.</span>
+  <span>Engineering calculations require validation.</span>
 </footer>
 
 </main>
@@ -716,461 +653,451 @@ footer {
 "use strict";
 
 const $ = id => document.getElementById(id);
+const NS = "http://www.w3.org/2000/svg";
 
-let currentSection = "C";
-let currentTool = "select";
-let currentLoad = "Point Load";
-let currentWall = "Thin-walled";
-let userShapes = [];
-let undoStack = [];
-
-const svgNS = "http://www.w3.org/2000/svg";
-const drawing = $("drawing");
-const sectionLayer = $("sectionLayer");
-const userLayer = $("userLayer");
-
-function svgElement(tag, attributes) {
-  const el = document.createElementNS(svgNS, tag);
-
-  Object.entries(attributes).forEach(([key, value]) => {
-    el.setAttribute(key, value);
-  });
-
-  return el;
-}
-
-function dimensions() {
-  return {
-    h: Math.max(1, Number($("height").value) || 60),
-    b: Math.max(1, Number($("width").value) || 100),
-    t: Math.max(0.1, Number($("thickness").value) || 2),
-    L: Math.max(1, Number($("length").value) || 500)
-  };
-}
-
-function saveUndo() {
-  undoStack.push({
-    section: currentSection,
-    shapes: JSON.parse(JSON.stringify(userShapes))
-  });
-
-  if (undoStack.length > 30) undoStack.shift();
-}
-
-function drawSection() {
-  sectionLayer.replaceChildren();
-
-  const { h, b, t } = dimensions();
-  const scale = Math.min(2.2, 240 / Math.max(h, b));
-  const H = h * scale;
-  const B = b * scale;
-  const T = Math.max(3, t * scale);
-  const x = (700 - B) / 2;
-  const y = (350 - H) / 2;
-
-  const style = {
-    fill: "#dedcff",
-    stroke: "#6257f5",
-    "stroke-width": "3",
-    "stroke-linejoin": "round"
-  };
-
-  let shape;
-
-  switch (currentSection) {
-    case "C":
-      shape = svgElement("path", {
-        d: `M ${x+B} ${y}
-            H ${x} V ${y+H} H ${x+B}
-            V ${y+H-T} H ${x+T}
-            V ${y+T} H ${x+B} Z`,
-        ...style
-      });
-      break;
-
-    case "I":
-      shape = svgElement("path", {
-        d: `M ${x} ${y} H ${x+B} V ${y+T}
-        H ${x+B/2+T/2} V ${y+H-T}
-        H ${x+B} V ${y+H} H ${x}
-        V ${y+H-T} H ${x+B/2-T/2}
-        V ${y+T} H ${x} Z`,
-        ...style
-      });
-      break;
-
-    case "T":
-      shape = svgElement("path", {
-        d: `M ${x} ${y} H ${x+B} V ${y+T}
-        H ${x+B/2+T/2} V ${y+H}
-        H ${x+B/2-T/2} V ${y+T} H ${x} Z`,
-        ...style
-      });
-      break;
-
-    case "L":
-      shape = svgElement("path", {
-        d: `M ${x} ${y} H ${x+T}
-        V ${y+H-T} H ${x+B}
-        V ${y+H} H ${x} Z`,
-        ...style
-      });
-      break;
-
-    case "Box":
-      shape = svgElement("path", {
-        d: `M ${x} ${y} H ${x+B} V ${y+H}
-        H ${x} Z M ${x+T} ${y+T}
-        V ${y+H-T} H ${x+B-T}
-        V ${y+T} Z`,
-        fill: "#dedcff",
-        stroke: "#6257f5",
-        "stroke-width": "3",
-        "fill-rule": "evenodd"
-      });
-      break;
-
-    case "Tube":
-      shape = svgElement("circle", {
-        cx: 350,
-        cy: 175,
-        r: Math.min(H, B) / 2,
-        fill: "#dedcff",
-        stroke: "#6257f5",
-        "stroke-width": "3"
-      });
-      break;
-
-    default:
-      shape = svgElement("path", {
-        d: `M ${x} ${y} H ${x+B} V ${y+H} H ${x} Z`,
-        ...style
-      });
-  }
-
-  sectionLayer.appendChild(shape);
-  drawDimensions();
-  renderUserShapes();
-  updateSummary();
-}
-
-function drawDimensions() {
-  const { h, b } = dimensions();
-  const scale = Math.min(2.2, 240 / Math.max(h, b));
-  const H = h * scale;
-  const B = b * scale;
-  const x = (700 - B) / 2;
-  const y = (350 - H) / 2;
-
-  const label = svgElement("text", {
-    x: 350,
-    y: Math.max(15, y - 10),
-    "text-anchor": "middle",
-    fill: "#46536f",
-    "font-size": "12",
-    "font-weight": "600"
-  });
-
-  label.textContent = `${b} mm`;
-  sectionLayer.appendChild(label);
-
-  const hLabel = svgElement("text", {
-    x: Math.max(15, x - 10),
-    y: 175,
-    transform: `rotate(-90 ${Math.max(15, x - 10)} 175)`,
-    "text-anchor": "middle",
-    fill: "#46536f",
-    "font-size": "12",
-    "font-weight": "600"
-  });
-
-  hLabel.textContent = `${h} mm`;
-  sectionLayer.appendChild(hLabel);
-}
-
-function renderUserShapes() {
-  userLayer.replaceChildren();
-
-  userShapes.forEach(s => {
-    let shape;
-
-    if (s.type === "line") {
-      shape = svgElement("line", {
-        x1: s.x1, y1: s.y1,
-        x2: s.x2, y2: s.y2,
-        stroke: "#ed8058",
-        "stroke-width": "3"
-      });
-    } else if (s.type === "rect") {
-      shape = svgElement("rect", {
-        x: Math.min(s.x1, s.x2),
-        y: Math.min(s.y1, s.y2),
-        width: Math.abs(s.x2 - s.x1),
-        height: Math.abs(s.y2 - s.y1),
-        fill: "#ffe1d3",
-        stroke: "#ed8058",
-        "stroke-width": "2"
-      });
-    } else if (s.type === "circle") {
-      shape = svgElement("circle", {
-        cx: s.x1,
-        cy: s.y1,
-        r: Math.hypot(s.x2-s.x1, s.y2-s.y1),
-        fill: "#ffe1d3",
-        stroke: "#ed8058",
-        "stroke-width": "2"
-      });
-    }
-
-    if (shape) userLayer.appendChild(shape);
-  });
-}
-
-function selectSection(name) {
-  saveUndo();
-  currentSection = name;
-  userShapes = [];
-
-  $("sectionLabel").textContent = name.toUpperCase() + "-SECTION";
-
-  document.querySelectorAll("[data-section]").forEach(button => {
-    button.classList.toggle("selected", button.dataset.section === name);
-    button.classList.toggle("active", button.dataset.section === name);
-  });
-
-  drawSection();
-}
-
-function updateSummary() {
-  const d = dimensions();
-
-  $("outSection").textContent = currentSection + "-section";
-  $("outDimensions").textContent = `${d.h} × ${d.b} mm`;
-  $("outThickness").textContent = `${d.t} mm`;
-  $("outLoad").textContent = `${$("magnitude").value || 0} ${$("loadUnit").value}`;
-  $("outMaterial").textContent =
-    `${$("youngs").value || 0} / ${$("shear").value || 0} GPa`;
-}
-
-function getSVGPoint(event) {
-  const point = drawing.createSVGPoint();
-  point.x = event.clientX;
-  point.y = event.clientY;
-
-  return point.matrixTransform(drawing.getScreenCTM().inverse());
-}
-
+let section = "C";
+let tool = "select";
+let segments = [];
+let sketch = [];
+let history = [];
 let activeShape = null;
 
-drawing.addEventListener("pointerdown", event => {
-  if (currentTool === "select") return;
+function element(tag, attrs = {}) {
+  const e = document.createElementNS(NS, tag);
+  Object.entries(attrs).forEach(([k,v]) => e.setAttribute(k,v));
+  return e;
+}
 
-  event.preventDefault();
-  saveUndo();
-
-  const point = getSVGPoint(event);
-
-  activeShape = {
-    type: currentTool,
-    x1: point.x,
-    y1: point.y,
-    x2: point.x,
-    y2: point.y
+function dims() {
+  return {
+    h: Number($("height").value),
+    b: Number($("width").value),
+    t: Number($("thickness").value),
+    L: Number($("length").value)
   };
+}
 
-  userShapes.push(activeShape);
-  renderUserShapes();
-  drawing.setPointerCapture(event.pointerId);
-});
+function validDimensions(d) {
+  return Number.isFinite(d.h) && Number.isFinite(d.b) &&
+    Number.isFinite(d.t) && Number.isFinite(d.L) &&
+    d.h > 0 && d.b > 0 && d.t > 0 && d.L > 0 &&
+    d.t < Math.min(d.h,d.b);
+}
 
-drawing.addEventListener("pointermove", event => {
-  if (!activeShape) return;
+/*
+  Segments represent wall centre-lines.
+  Coordinates are converted to millimetres for calculations.
+*/
+function buildSegments() {
+  const {h,b,t} = dims();
+  const H = h/2;
+  const B = b/2;
 
-  const point = getSVGPoint(event);
-  activeShape.x2 = point.x;
-  activeShape.y2 = point.y;
+  switch(section) {
+    case "C":
+      return [
+        {x1:-B,y1:-H,x2:-B,y2:H},
+        {x1:-B,y1:-H,x2:B,y2:-H},
+        {x1:-B,y1:H,x2:B,y2:H}
+      ];
 
-  renderUserShapes();
-});
+    case "I":
+      return [
+        {x1:-B,y1:-H,x2:B,y2:-H},
+        {x1:0,y1:-H,x2:0,y2:H},
+        {x1:-B,y1:H,x2:B,y2:H}
+      ];
 
-drawing.addEventListener("pointerup", () => {
-  activeShape = null;
-});
+    case "T":
+      return [
+        {x1:-B,y1:-H,x2:B,y2:-H},
+        {x1:0,y1:-H,x2:0,y2:H}
+      ];
 
-document.querySelectorAll("[data-tool]").forEach(button => {
-  button.addEventListener("click", () => {
-    currentTool = button.dataset.tool;
+    case "L":
+      return [
+        {x1:-B,y1:-H,x2:-B,y2:H},
+        {x1:-B,y1:H,x2:B,y2:H}
+      ];
 
-    document.querySelectorAll("[data-tool]").forEach(tool => {
-      tool.classList.toggle("active", tool === button);
-    });
+    case "Z":
+      return [
+        {x1:-B,y1:-H,x2:B,y2:-H},
+        {x1:0,y1:-H,x2:0,y2:H},
+        {x1:-B,y1:H,x2:B,y2:H}
+      ];
 
-    $("drawStatus").textContent =
-      currentTool === "select"
-        ? "Select mode"
-        : `Drawing mode: ${currentTool}`;
-  });
-});
+    case "Box":
+      return [
+        {x1:-B,y1:-H,x2:B,y2:-H},
+        {x1:B,y1:-H,x2:B,y2:H},
+        {x1:B,y1:H,x2:-B,y2:H},
+        {x1:-B,y1:H,x2:-B,y2:-H}
+      ];
 
-document.querySelectorAll("[data-section]").forEach(button => {
-  button.addEventListener("click", () => {
-    selectSection(button.dataset.section);
-  });
-});
+    case "Custom":
+      return sketch
+        .filter(s => s.type === "line")
+        .map(s => ({
+          x1: (s.x1-350)/2,
+          y1: (175-s.y1)/2,
+          x2: (s.x2-350)/2,
+          y2: (175-s.y2)/2
+        }));
 
-$("applyDimensions").addEventListener("click", drawSection);
-
-$("resetDrawing").addEventListener("click", () => {
-  $("height").value = 60;
-  $("width").value = 100;
-  $("thickness").value = 2;
-  $("length").value = 500;
-  userShapes = [];
-  selectSection("C");
-});
-
-$("clearButton").addEventListener("click", () => {
-  saveUndo();
-  userShapes = [];
-  renderUserShapes();
-});
-
-$("undoButton").addEventListener("click", () => {
-  const previous = undoStack.pop();
-
-  if (previous) {
-    currentSection = previous.section;
-    userShapes = previous.shapes;
-    drawSection();
-  } else {
-    userShapes.pop();
-    renderUserShapes();
+    default:
+      return [];
   }
+}
+
+/*
+  Thin-wall centreline approximations:
+  A = sum(t * length)
+  Centroid and second moments are integrated along each straight segment.
+  These properties do not include local corner radii or detailed
+  finite-thickness junction geometry.
+*/
+function sectionProperties(lines,t) {
+  const usable = lines.map(s => {
+    const dx = s.x2-s.x1;
+    const dy = s.y2-s.y1;
+    const length = Math.hypot(dx,dy);
+    return {...s, dx, dy, length, A:t*length};
+  }).filter(s => s.length > 0);
+
+  if (!usable.length) throw new Error("Draw at least one line segment.");
+
+  const area = usable.reduce((sum,s) => sum+s.A,0);
+
+  if (!(area > 0)) throw new Error("Section area must be positive.");
+
+  const cx = usable.reduce((sum,s) =>
+    sum+s.A*(s.x1+s.x2)/2,0)/area;
+
+  const cy = usable.reduce((sum,s) =>
+    sum+s.A*(s.y1+s.y2)/2,0)/area;
+
+  let Ixx = 0, Iyy = 0, Ixy = 0;
+
+  usable.forEach(s => {
+    const mx = (s.x1+s.x2)/2-cx;
+    const my = (s.y1+s.y2)/2-cy;
+
+    Ixx += t*s.length*(my*my+s.dy*s.dy/12);
+    Iyy += t*s.length*(mx*mx+s.dx*s.dx/12);
+    Ixy += t*s.length*(mx*my+s.dx*s.dy/12);
+  });
+
+  return {area,cx,cy,Ixx,Iyy,Ixy,segments:usable};
+}
+
+function drawModel() {
+  const layer = $("presetLayer");
+  layer.replaceChildren();
+
+  const {h,b,t} = dims();
+  const scale = Math.min(240/h,240/b,2.4);
+  const H = h*scale, B = b*scale;
+  const x = 350-B/2, y = 175-H/2;
+  const T = Math.max(2,t*scale);
+
+  let path = "";
+
+  if(section === "C") {
+    path = `M ${x} ${y} L ${x+B} ${y}
+      M ${x} ${y} L ${x} ${y+H}
+      M ${x} ${y+H} L ${x+B} ${y+H}`;
+  } else if(section === "I") {
+    path = `M ${x} ${y} L ${x+B} ${y}
+      M 350 ${y} L 350 ${y+H}
+      M ${x} ${y+H} L ${x+B} ${y+H}`;
+  } else if(section === "T") {
+    path = `M ${x} ${y} L ${x+B} ${y}
+      M 350 ${y} L 350 ${y+H}`;
+  } else if(section === "L") {
+    path = `M ${x} ${y} L ${x} ${y+H}
+      M ${x} ${y+H} L ${x+B} ${y+H}`;
+  } else if(section === "Z") {
+    path = `M ${x} ${y} L ${x+B} ${y}
+      M 350 ${y} L 350 ${y+H}
+      M ${x} ${y+H} L ${x+B} ${y+H}`;
+  } else if(section === "Box") {
+    path = `M ${x} ${y} L ${x+B} ${y}
+      L ${x+B} ${y+H} L ${x} ${y+H} Z`;
+  } else if(section === "Custom") {
+    path = sketch.filter(s => s.type==="line")
+      .map(s => `M ${s.x1} ${s.y1} L ${s.x2} ${s.y2}`)
+      .join(" ");
+  }
+
+  if(path) {
+    layer.appendChild(element("path", {
+      d:path, fill:"none", stroke:"#6558d9",
+      "stroke-width":Math.max(3,T),
+      "stroke-linecap":"round",
+      "stroke-linejoin":"round"
+    }));
+  }
+
+  sketch.forEach(s => {
+    let e;
+    if(s.type==="line") {
+      e=element("line",{
+        x1:s.x1,y1:s.y1,x2:s.x2,y2:s.y2,
+        stroke:"#e88c61","stroke-width":3
+      });
+    } else if(s.type==="rect") {
+      e=element("rect",{
+        x:Math.min(s.x1,s.x2),y:Math.min(s.y1,s.y2),
+        width:Math.abs(s.x2-s.x1),height:Math.abs(s.y2-s.y1),
+        fill:"#ffe3d4",stroke:"#e88c61","stroke-width":2
+      });
+    } else if(s.type==="circle") {
+      e=element("circle",{
+        cx:s.x1,cy:s.y1,
+        r:Math.hypot(s.x2-s.x1,s.y2-s.y1),
+        fill:"#ffe3d4",stroke:"#e88c61","stroke-width":2
+      });
+    }
+    if(e) $("sketchLayer").appendChild(e);
+  });
+
+  $("sectionName").textContent = section+"-section";
+  document.querySelectorAll("[data-preset]").forEach(btn => {
+    btn.classList.toggle("active",btn.dataset.preset===section);
+  });
+}
+
+function recalculate() {
+  const d=dims();
+
+  if(!validDimensions(d)) {
+    $("calcStatus").textContent="Invalid inputs";
+    $("resultNotice").className="notice warning";
+    $("resultNotice").textContent=
+      "Check your dimensions. Values must be positive, and thickness must be smaller than both height and width.";
+    return;
+  }
+
+  try {
+    const lines=buildSegments();
+    const p=sectionProperties(lines,d.t);
+
+    $("areaResult").textContent=p.area.toFixed(2)+" mm²";
+    $("cxResult").textContent=p.cx.toFixed(2)+" mm";
+    $("cyResult").textContent=p.cy.toFixed(2)+" mm";
+    $("ixResult").textContent=p.Ixx.toExponential(3);
+    $("iyResult").textContent=p.Iyy.toExponential(3);
+
+    const rawLoad=Number($("load").value);
+    const loadUnit=$("loadUnit").value;
+    const E=Number($("young").value)*1000;
+    const loadPosition=Number($("loadPosition").value);
+    const P=rawLoad*(loadUnit==="kN"?1000:1);
+
+    $("loadResult").textContent=rawLoad+" "+loadUnit;
+    $("scResult").textContent="Not calculated";
+
+    if(!Number.isFinite(P) || P<0 ||
+       !Number.isFinite(E) || E<=0 ||
+       !Number.isFinite(loadPosition) || loadPosition<0) {
+      throw new Error("Check load, modulus, and load position values.");
+    }
+
+    let delta=null;
+    const L=d.L;
+    const type=$("loadType").value;
+
+    /*
+      Euler-Bernoulli cantilever equations:
+      tip point load: delta = P L^3 / (3 E I)
+      full-span UDL: delta = w L^4 / (8 E I)
+      end moment: delta = M L^2 / (2 E I)
+      These equations apply only to the stated idealized load cases.
+    */
+    if(type==="point" && loadPosition===L) {
+      delta=P*Math.pow(L,3)/(3*E*p.Ixx);
+    } else if(type==="distributed") {
+      delta=P*Math.pow(L,4)/(8*E*p.Ixx);
+    } else if(type==="moment") {
+      delta=P*Math.pow(L,2)/(2*E*p.Ixx);
+    }
+
+    $("deflectionResult").textContent=
+      delta===null ? "Unsupported load position" : delta.toFixed(4)+" mm";
+
+    $("calcStatus").textContent="Calculated";
+    $("resultNotice").className="notice warning";
+    $("resultNotice").textContent=
+      "Geometric results use a thin-wall centreline model. The deflection estimate uses Euler–Bernoulli beam theory and Ixx for vertical bending. The selected cross-section is not yet used in a validated shear-centre solver. Treat these results as preliminary, not as validated engineering design values.";
+
+  } catch(error) {
+    $("calcStatus").textContent="Check model";
+    $("resultNotice").className="notice warning";
+    $("resultNotice").textContent=error.message;
+  }
+}
+
+function selectPreset(name) {
+  section=name;
+  sketch=[];
+  drawModel();
+  recalculate();
+}
+
+document.querySelectorAll("[data-preset]").forEach(btn => {
+  btn.addEventListener("click",()=>selectPreset(btn.dataset.preset));
 });
 
-document.querySelectorAll("#loadTypes button").forEach(button => {
-  button.addEventListener("click", () => {
-    currentLoad = button.dataset.load;
-
-    document.querySelectorAll("#loadTypes button").forEach(item => {
-      item.classList.toggle("selected", item === button);
-    });
+document.querySelectorAll("[data-tool]").forEach(btn => {
+  btn.addEventListener("click",()=>{
+    tool=btn.dataset.tool;
+    document.querySelectorAll("[data-tool]").forEach(b=>
+      b.classList.toggle("active",b===btn)
+    );
+    $("drawStatus").textContent=
+      tool==="select"?"Select mode": "Drawing mode: "+tool;
   });
 });
 
-document.querySelectorAll("#wallTypes button").forEach(button => {
-  button.addEventListener("click", () => {
-    currentWall = button.dataset.wall;
+function pointFromEvent(event) {
+  const svg=$("canvas");
+  const p=svg.createSVGPoint();
+  p.x=event.clientX;
+  p.y=event.clientY;
+  return p.matrixTransform(svg.getScreenCTM().inverse());
+}
 
-    document.querySelectorAll("#wallTypes button").forEach(item => {
-      item.classList.toggle("selected", item === button);
-    });
-  });
+$("canvas").addEventListener("pointerdown",event=>{
+  if(tool==="select") return;
+
+  const p=pointFromEvent(event);
+  activeShape={
+    type:tool,x1:p.x,y1:p.y,x2:p.x,y2:p.y
+  };
+  sketch.push(activeShape);
+  $("canvas").setPointerCapture(event.pointerId);
+  drawModel();
 });
 
-$("material").addEventListener("change", () => {
-  if ($("material").value === "aluminium") {
-    $("youngs").value = 69;
-    $("shear").value = 26;
-  }
+$("canvas").addEventListener("pointermove",event=>{
+  if(!activeShape) return;
+  const p=pointFromEvent(event);
+  activeShape.x2=p.x;
+  activeShape.y2=p.y;
+  drawModel();
+});
 
-  if ($("material").value === "steel") {
-    $("youngs").value = 200;
-    $("shear").value = 77;
-  }
+$("canvas").addEventListener("pointerup",()=>{activeShape=null;});
 
-  updateSummary();
+$("undoBtn").addEventListener("click",()=>{
+  sketch.pop();
+  drawModel();
+  recalculate();
+});
+
+$("clearBtn").addEventListener("click",()=>{
+  sketch=[];
+  if(section==="Custom") section="C";
+  drawModel();
+  recalculate();
+});
+
+$("applyBtn").addEventListener("click",()=>{
+  drawModel();
+  recalculate();
+});
+
+$("calculateBtn").addEventListener("click",recalculate);
+
+$("material").addEventListener("change",()=>{
+  const m=$("material").value;
+  if(m==="aluminium") {
+    $("young").value=69;
+    $("shear").value=26;
+  } else if(m==="steel") {
+    $("young").value=200;
+    $("shear").value=77;
+  }
+  recalculate();
 });
 
 [
-  "height", "width", "thickness", "length",
-  "magnitude", "loadUnit", "youngs", "shear"
-].forEach(id => {
-  $(id).addEventListener("change", updateSummary);
+  "height","width","thickness","length","young","shear",
+  "load","loadUnit","loadType","loadPosition","direction","wallType"
+].forEach(id=>{
+  $(id).addEventListener("change",recalculate);
 });
 
-$("runAnalysis").addEventListener("click", () => {
-  updateSummary();
-
-  $("status").textContent = "INPUTS READY";
-
-  $("notice").innerHTML =
-    "<strong>Model inputs collected.</strong><br>" +
-    "The numerical mechanics solver is not implemented yet. " +
-    "No verified shear-centre coordinates, stress values, or " +
-    "deformation values have been calculated.";
-
-  $("resultsCard").scrollIntoView({
-    behavior: "smooth",
-    block: "nearest"
-  });
+$("resetBtn").addEventListener("click",()=>{
+  $("height").value=60;
+  $("width").value=100;
+  $("thickness").value=2;
+  $("length").value=500;
+  $("load").value=100;
+  $("loadUnit").value="N";
+  $("loadPosition").value=500;
+  $("loadType").value="point";
+  $("material").value="aluminium";
+  $("young").value=69;
+  $("shear").value=26;
+  $("direction").value="vertical";
+  $("wallType").value="thin";
+  sketch=[];
+  selectPreset("C");
 });
 
-$("exportButton").addEventListener("click", () => {
-  const d = dimensions();
+$("homeBtn").addEventListener("click",()=>{
+  $("editor").scrollIntoView({behavior:"smooth"});
+});
 
-  const model = {
-    project: "TENSOR",
-    section: currentSection,
-    dimensions: {
-      height_mm: d.h,
-      width_mm: d.b,
-      thickness_mm: d.t,
-      length_mm: d.L
+$("startBtn").addEventListener("click",()=>{
+  $("editor").scrollIntoView({behavior:"smooth"});
+});
+
+function modelData() {
+  return {
+    project:"TENSOR",
+    section,
+    dimensions_mm:dims(),
+    material:{
+      name:$("material").value,
+      youngs_modulus_GPa:Number($("young").value),
+      shear_modulus_GPa:Number($("shear").value)
     },
-    loading: {
-      type: currentLoad,
-      magnitude: Number($("magnitude").value) || 0,
-      unit: $("loadUnit").value,
-      direction: $("direction").value
+    loading:{
+      type:$("loadType").value,
+      magnitude:Number($("load").value),
+      unit:$("loadUnit").value,
+      application_position_mm:Number($("loadPosition").value),
+      direction:$("direction").value
     },
-    material: {
-      name: $("material").value,
-      youngs_modulus_GPa: Number($("youngs").value) || 0,
-      shear_modulus_GPa: Number($("shear").value) || 0
-    },
-    model_assumptions: {
-      wall_type: currentWall
-    },
-    user_drawings: userShapes,
-    solver_status: "Not implemented"
+    wall_model:$("wallType").value,
+    sketch,
+    note:"Preliminary model. No validated shear-centre solver is included."
   };
+}
 
-  const blob = new Blob(
-    [JSON.stringify(model, null, 2)],
-    { type: "application/json" }
+$("exportBtn").addEventListener("click",downloadModel);
+$("downloadBtn").addEventListener("click",downloadModel);
+
+function downloadModel() {
+  const blob=new Blob(
+    [JSON.stringify(modelData(),null,2)],
+    {type:"application/json"}
   );
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="tensor-model.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
 
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-
-  link.href = url;
-  link.download = "tensor-model.json";
-  link.click();
-
-  URL.revokeObjectURL(url);
-});
-
-$("startButton").addEventListener("click", () => {
-  $("geometryCard").scrollIntoView({
-    behavior: "smooth"
-  });
-});
-
-$("newAnalysis").addEventListener("click", () => {
-  selectSection("C");
-});
-
-$("examples").addEventListener("click", () => {
-  $("height").value = 60;
-  $("width").value = 100;
-  $("thickness").value = 2;
-  $("magnitude").value = 10;
-  selectSection("C");
-});
-
-drawSection();
+drawModel();
+recalculate();
 </script>
-
 </body>
 </html>
