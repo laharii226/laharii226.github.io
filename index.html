@@ -1,1103 +1,1124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-zone="safe" data-mode="an">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TENSOR — Shear Centre Studio</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aneurix</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,400&family=Instrument+Sans:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --ink: #24243b;
-  --muted: #77778d;
-  --paper: #f8f7f4;
-  --white: #fff;
-  --purple: #6558d9;
-  --purple-light: #eeebff;
-  --orange: #e88c61;
-  --border: #e8e5ed;
-  --green: #23866a;
-}
+  :root { --bg1:#12030a; --bg2:#2b0812; --ink:#f8e6e2; --muted:#c79a98; --line:rgba(255,120,120,.28); --accent:#ff5a5f; --zone:#e3b2a8; }
+  :root[data-zone="warn"] { --zone:#f2b64d; }
+  :root[data-zone="danger"] { --zone:#ff4545; }
+  :root[data-mode="an"] .st, :root[data-mode="sten"] .an { display:none !important; }
+  * { box-sizing:border-box; }
+  body { margin:0; color:var(--ink); font-family:"Instrument Sans", system-ui, sans-serif; line-height:1.55;
+         background:radial-gradient(1200px 600px at 50% -10%, var(--bg2), var(--bg1)) fixed; min-height:100vh; }
+  main { max-width:1000px; margin:0 auto; padding:40px 20px 64px; }
+  h1 { font-family:Fraunces, Georgia, serif; font-weight:700; font-size:clamp(2.2rem,6vw,3.8rem); line-height:1.05; margin:0 0 12px; }
+  h2 { font-family:Fraunces, Georgia, serif; font-weight:500; font-size:1.5rem; margin:40px 0 6px; }
+  .lead { max-width:62ch; color:var(--muted); margin:0 0 24px; font-size:1.05rem; }
+  .vessel { border:1px solid var(--line); border-radius:18px; overflow:hidden; background:#0c0207; }
+  canvas { display:block; width:100%; height:auto; }
+  .picker { margin-top:16px; padding:18px; border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.04); }
+  .pickrow { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:700px) { .pickrow { grid-template-columns:1fr; } }
+  .picker label { font-family:Fraunces, Georgia, serif; font-size:1.1rem; font-weight:500; display:block; margin-bottom:6px; }
+  select { width:100%; padding:11px 12px; font:inherit; color:var(--ink); background:#1d0610; border:1px solid var(--line); border-radius:10px; }
+  #sitBlurb { color:var(--muted); margin:12px 0 0; font-size:.95rem; }
+  dl { display:grid; grid-template-columns:auto 1fr; gap:6px 16px; margin:14px 0 0; font-size:.92rem; }
+  dt { color:var(--accent); font-weight:600; } dd { margin:0; }
+  .panel { display:grid; grid-template-columns:1.1fr 1fr; gap:36px; margin-top:28px; }
+  @media (max-width:760px) { .panel { grid-template-columns:1fr; } }
+  .control { margin-bottom:16px; }
+  .control label { display:flex; justify-content:space-between; font-weight:600; margin-bottom:4px; }
+  .control output { color:var(--accent); font-variant-numeric:tabular-nums; }
+  input[type=range] { width:100%; accent-color:var(--accent); }
+  .readout { display:grid; grid-template-columns:1fr 1fr; gap:20px 16px; }
+  .readout b { display:block; font-family:Fraunces, Georgia, serif; font-size:1.8rem; font-weight:500; line-height:1.1; }
+  .readout span { color:var(--muted); font-size:.85rem; }
+  .readout .big b { color:var(--zone); }
+  #verdict { margin-top:22px; padding:14px 16px; border-left:4px solid var(--zone); background:rgba(255,90,95,.08); border-radius:0 10px 10px 0; font-weight:600; }
+  button { font:inherit; font-weight:600; color:#1a0409; background:var(--accent); border:0; border-radius:999px; padding:10px 20px; cursor:pointer; margin-top:14px; }
+  button:focus-visible, select:focus-visible { outline:2px solid #fff; outline-offset:2px; }
+  .row { display:grid; grid-template-columns:260px 1fr 52px; gap:12px; align-items:center; padding:5px 0; font-size:.95rem; }
+  @media (max-width:640px) { .row { grid-template-columns:1fr 52px; } .row .track { grid-column:1 / 3; } }
+  .track { height:12px; border-radius:6px; background:rgba(255,255,255,.08); overflow:hidden; }
+  .fill { height:100%; border-radius:6px; background:#8d4a55; }
+  .row.best .fill { background:#f2b64d; } .row.pick .fill { background:var(--accent); }
+  .row.best .nm { color:#f2b64d; font-weight:600; } .row.pick .nm { font-weight:600; }
+  .row .sc { text-align:right; font-variant-numeric:tabular-nums; }
+  #why { margin:16px 0 0; max-width:70ch; }
+  :root[data-load="sq"] .cr, :root[data-load="cr"] .sq { display:none !important; }
+  .sstage { border:1px solid var(--line); border-radius:18px; background:#050d13; overflow:hidden; }
+  #sc3 { touch-action:none; cursor:grab; }
+  :root[data-view="2d"] #sc3, :root[data-view="3d"] #sc { display:none; }
+  #gc { background:#0c0207; border:1px solid var(--line); border-radius:18px; }
+  #gsec dd { max-width:78ch; }
+  .slegend { margin:14px 6px 0; position:relative; padding-bottom:24px; }
+  .sbar { height:10px; border-radius:6px; background:linear-gradient(90deg,#315ce0 0%,#24bee1 17%,#50c864 33%,#f5dc46 50%,#e63228 67%,#b4145a 100%); }
+  .slegend span { position:absolute; top:16px; font-size:.78rem; color:var(--muted); transform:translateX(-50%); white-space:nowrap; }
+  .mgrid { display:grid; grid-template-columns:1.1fr 1fr; gap:36px; margin-top:18px; }
+  @media (max-width:760px) { .mgrid { grid-template-columns:1fr; } }
+  .modes { display:inline-flex; background:#2a0f18; border-radius:999px; padding:4px; }
+  .modes label { cursor:pointer; padding:7px 16px; border-radius:999px; font-weight:500; font-size:.92rem; }
+  .modes input { position:absolute; opacity:0; }
+  .modes label:has(input:checked) { background:var(--accent); color:#1a0409; font-weight:700; }
+  .modes label:has(input:focus-visible) { outline:2px solid #fff; }
+  .split { display:grid; grid-template-columns:minmax(260px,2fr) minmax(0,3fr); gap:20px; align-items:start; margin:0 0 20px; }
+  .pnl { border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.03); overflow:hidden; min-width:0; }
+  .pcell { padding:12px 16px 14px; border-bottom:1px solid var(--line); min-width:0; }
+  .pcell:last-child { border-bottom:0; }
+  .prow { display:grid; grid-template-columns:1fr 1fr; border-bottom:1px solid var(--line); }
+  .prow .pcell { border-bottom:0; }
+  .prow .pcell + .pcell { border-left:1px solid var(--line); }
+  .pcell h4 { margin:0 0 8px; font-size:.78rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+  .pnl .modes { flex-wrap:wrap; border-radius:20px; max-width:100%; }
+  .pnl .modes label { padding:6px 12px; }
+  .pnl .steps label + label::before { content:"\2192\00a0"; opacity:.6; }
+  .pnl button { margin-top:10px; padding:7px 16px; }
+  .pnl .control:last-child { margin-bottom:0; }
+  .ctlhint { margin:8px 0 0; font-size:.8rem; color:var(--muted); }
+  :root:not([data-load="dp"]) #dpCell .modes, :root:not([data-load="dp"]) #dpCell button { opacity:.4; pointer-events:none; }
+  :root[data-load="dp"] #dpCell .ctlhint { display:none; }
+  .descs { margin-top:6px; }
+  .descs .readout { margin-top:0; }
+  @media (max-width:860px) { .split { grid-template-columns:1fr; } .split > .pnl.pview { order:-1; } .prow { grid-template-columns:1fr; } .prow .pcell + .pcell { border-left:0; border-top:1px solid var(--line); } }
+  .note { margin-top:34px; color:var(--muted); font-size:.9rem; max-width:74ch; }
 
-* { box-sizing: border-box; }
+.view{display:none}.view.on{display:block}
+#shared{display:none}:root:not([data-page="home"]) #shared{display:block}
+:root[data-page="home"] .note{display:none}
+#nav{position:sticky;top:0;z-index:20;display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:-40px -20px 24px;padding:12px 20px;background:rgba(18,3,10,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+#nav a{color:var(--ink);text-decoration:none;font-weight:600;font-size:.92rem;padding:7px 14px;border-radius:999px;border:1px solid transparent}
+#nav a:hover{border-color:var(--line)}#nav a.act{background:var(--accent);color:#1a0409}
+#nav .logo{margin-right:auto;font-family:Fraunces,Georgia,serif;font-size:1.05rem}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:8px}
+@media(max-width:640px){.cards{grid-template-columns:1fr}}
+.card{position:relative;display:flex;flex-direction:column;gap:8px;min-height:190px;padding:24px;border:1px solid var(--line);border-radius:20px;color:var(--ink);text-decoration:none;background:linear-gradient(145deg,rgba(255,90,95,.14),rgba(255,255,255,.03));transition:transform .2s,border-color .2s,box-shadow .2s;overflow:hidden}
+.card:hover,.card:focus-visible{transform:translateY(-5px);border-color:var(--accent);box-shadow:0 14px 40px rgba(255,90,95,.25);outline:none}
+.card i{position:absolute;right:16px;top:2px;font:700 5rem/1 Fraunces,Georgia,serif;font-style:normal;color:rgba(255,120,120,.14)}
+.card b{font:500 1.55rem Fraunces,Georgia,serif}.card span{color:var(--muted);max-width:34ch}
+.card em{margin-top:auto;font-style:normal;font-weight:600;color:var(--accent)}
+.hint{margin-top:22px;color:var(--muted);font-size:.9rem}
 
-body {
-  margin: 0;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: "DM Sans", sans-serif;
-}
+#dpbox{display:none}:root[data-load="dp"] #dpbox{display:block}:root[data-load="dp"] .sq{display:none!important}
+#dpNote{margin:12px 0 0;color:var(--muted);font-size:.85rem;max-width:60ch}
 
-button, input, select { font: inherit; }
-button { cursor: pointer; }
+.viewpair{display:block}
+@media(max-width:860px){.viewpair{grid-template-columns:1fr}}
+#peeqLine{margin:10px 0 0;font-size:.92rem;max-width:80ch}
 
-.topbar {
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 30px;
-  background: var(--white);
-  border-bottom: 1px solid var(--border);
-}
+/* ---- intro splash: count to 72, curtains open, then the name glides in letter by letter ---- */
+#intro{position:fixed;inset:0;z-index:9999;overflow:hidden;cursor:pointer;
+  background:radial-gradient(900px 500px at 50% 45%,rgba(255,90,95,.16),rgba(255,90,95,0) 70%),radial-gradient(1200px 600px at 50% -10%,var(--bg2),var(--bg1));transition:opacity .8s ease,visibility .8s ease}
+#intro.out{opacity:0;visibility:hidden}
+#intro .icl,#intro .icr{position:absolute;top:0;bottom:0;width:50.4%;transition:transform 1.2s cubic-bezier(.75,0,.2,1);z-index:2}
+#intro .icl{left:0;background:linear-gradient(90deg,#0b0207,#2b0812);border-right:2px solid var(--accent);box-shadow:8px 0 40px rgba(255,90,95,.35)}
+#intro .icr{right:0;background:linear-gradient(270deg,#0b0207,#2b0812);border-left:2px solid var(--accent);box-shadow:-8px 0 40px rgba(255,90,95,.35)}
+#intro.open .icl{transform:translateX(-101%)}
+#intro.open .icr{transform:translateX(101%)}
+#intro .cnt{position:absolute;inset:0;z-index:3;display:grid;place-items:center;transition:opacity .5s;pointer-events:none}
+#intro.open .cnt{opacity:0}
+#intro .cnt b{display:block;text-align:center;font:500 clamp(3rem,10vw,7rem)/1 Fraunces,Georgia,serif;font-variant-numeric:tabular-nums}
+#intro .cnt i{display:block;height:2px;width:0;margin:10px auto 0;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+#intro .ttl{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);z-index:1;text-align:center;padding:0 5vw}
+#intro .name{margin:0 0 18px;font:700 clamp(3.4rem,15vw,9.5rem)/1 Fraunces,Georgia,serif;letter-spacing:-.02em;color:var(--ink)}
+#intro .name .w{display:inline-block;white-space:nowrap}
+#intro .name .ch{display:inline-block;opacity:0;transform:translateX(-90px);filter:blur(6px);animation:introGlide 1.1s cubic-bezier(.16,1,.3,1) forwards;animation-delay:calc(var(--d) + var(--i)*170ms)}
+#intro .name .ch.red{color:var(--accent)}
+#intro .tag{margin:0;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);opacity:0;animation:introFade 1s ease forwards;animation-delay:var(--td)}
+#intro .skip{position:absolute;bottom:22px;left:0;right:0;z-index:4;text-align:center;font-size:.8rem;color:var(--muted);opacity:.7}
+@keyframes introGlide{to{opacity:1;transform:none;filter:none}}
+@keyframes introFade{to{opacity:1}}
+html.introing,html.introing body{overflow:hidden}
 
-.brand {
-  font: 800 25px "Manrope", sans-serif;
-  letter-spacing: 4px;
-}
-
-.brand span { color: var(--purple); }
-
-.top-right {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.badge {
-  background: #e5f5ed;
-  color: #247c5c;
-  padding: 7px 11px;
-  border-radius: 20px;
-  font-weight: 700;
-}
-
-.app {
-  display: grid;
-  grid-template-columns: 225px minmax(0, 1fr);
-  min-height: calc(100vh - 72px);
-}
-
-.sidebar {
-  background: #29283f;
-  color: white;
-  padding: 24px 14px;
-}
-
-.side-label {
-  color: #a8a6be;
-  font-size: 10px;
-  letter-spacing: 1.8px;
-  margin: 22px 12px 10px;
-}
-
-.side-btn {
-  display: block;
-  width: 100%;
-  padding: 12px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: #dedcec;
-  text-align: left;
-  margin-bottom: 5px;
-}
-
-.side-btn:hover, .side-btn.active {
-  background: #48436e;
-  color: white;
-}
-
-main {
-  min-width: 0;
-  padding: 27px;
-}
-
-.hero {
-  padding: 27px 30px;
-  border-radius: 15px;
-  background: linear-gradient(115deg, #eeebff, #f9eade);
-  border: 1px solid #e7def4;
-  margin-bottom: 22px;
-}
-
-.eyebrow {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: var(--purple);
-}
-
-.hero h1 {
-  font: 800 clamp(27px, 4vw, 39px) "Manrope", sans-serif;
-  margin: 12px 0 8px;
-}
-
-.hero p {
-  color: #67647e;
-  max-width: 640px;
-  line-height: 1.7;
-  font-size: 13px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(290px, .8fr);
-  gap: 18px;
-  align-items: start;
-}
-
-.stack {
-  display: grid;
-  gap: 18px;
-  min-width: 0;
-}
-
-.card {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.card-head {
-  padding: 17px 19px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-
-.card-head h2 {
-  font: 700 15px "Manrope", sans-serif;
-  margin: 0;
-}
-
-.step { color: var(--purple); margin-right: 8px; }
-
-.small-label {
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.tools {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  padding: 13px;
-}
-
-.tool {
-  border: 1px solid var(--border);
-  background: white;
-  color: #62617a;
-  border-radius: 7px;
-  padding: 9px 11px;
-  font-size: 11px;
-}
-
-.tool.active {
-  background: var(--purple-light);
-  color: var(--purple);
-  border-color: #c6c0ff;
-}
-
-.drawing {
-  margin: 0 13px;
-  height: 340px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-  background: #fdfcff;
-}
-
-svg { width: 100%; height: 100%; display: block; }
-
-.drawing-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 13px;
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  padding: 17px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  min-width: 0;
-}
-
-.field.full { grid-column: 1 / -1; }
-
-.field label {
-  color: #74738a;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.field input, .field select {
-  min-width: 0;
-  width: 100%;
-  padding: 11px;
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  background: white;
-  color: var(--ink);
-  outline: none;
-}
-
-.field input:focus, .field select:focus {
-  border-color: var(--purple);
-}
-
-.btn {
-  border: 0;
-  border-radius: 8px;
-  padding: 12px 15px;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.primary { background: var(--purple); color: white; }
-.secondary { background: white; color: var(--ink); border: 1px solid var(--border); }
-
-.full-btn {
-  width: calc(100% - 34px);
-  margin: 0 17px 17px;
-}
-
-.presets {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 9px;
-  padding: 15px;
-}
-
-.preset {
-  border: 1px solid var(--border);
-  background: white;
-  border-radius: 8px;
-  padding: 13px 5px;
-  color: var(--ink);
-}
-
-.preset strong {
-  display: block;
-  font: 700 25px "Manrope", sans-serif;
-  color: var(--purple);
-  margin-bottom: 5px;
-}
-
-.preset span { font-size: 10px; }
-
-.preset.active {
-  border-color: var(--purple);
-  background: var(--purple-light);
-}
-
-.metrics {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  padding: 15px;
-}
-
-.metric {
-  background: #f8f7fc;
-  border-radius: 9px;
-  padding: 13px;
-  min-width: 0;
-}
-
-.metric span {
-  display: block;
-  font-size: 10px;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-
-.metric strong {
-  display: block;
-  font: 700 18px "Manrope", sans-serif;
-  overflow-wrap: anywhere;
-}
-
-.result-list { padding: 0 16px 15px; }
-
-.result-row {
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 11px;
-}
-
-.result-row span { color: var(--muted); }
-.result-row strong { text-align: right; }
-
-.notice {
-  margin: 15px;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 11px;
-  line-height: 1.7;
-}
-
-.notice.warning {
-  background: #fff5e9;
-  border: 1px solid #f0ddbf;
-  color: #77552d;
-}
-
-.notice.success {
-  background: #eaf7f0;
-  border: 1px solid #c7e7d6;
-  color: #246b50;
-}
-
-footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
-  color: var(--muted);
-  font-size: 10px;
-  padding: 22px 0 5px;
-}
-
-@media(max-width: 1000px) {
-  .app { grid-template-columns: 1fr; }
-  .sidebar { display: none; }
-  .grid { grid-template-columns: 1fr; }
-}
-
-@media(max-width: 580px) {
-  main { padding: 12px; }
-  .topbar { padding: 0 15px; }
-  .top-right { font-size: 10px; }
-  .hero { padding: 21px; }
-  .form { grid-template-columns: 1fr; }
-  .field.full { grid-column: auto; }
-  .drawing { height: 280px; }
-}
+/* ---- home: hero with a rotating 3D stent, options below ---- */
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:32px;align-items:center;min-height:min(74vh,620px);padding:8px 0 36px}
+.eyebrow{display:inline-block;font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:16px;padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,90,95,.08)}
+.heroSub{color:var(--muted);max-width:52ch;margin:0 0 24px}
+.heroBtns{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.heroBtns button{margin-top:0;padding:11px 22px}
+.btn{display:inline-block;font-weight:600;border-radius:999px;padding:10px 20px;text-decoration:none;border:1px solid var(--line);color:var(--ink);transition:border-color .2s,background .2s}
+.btn:hover{border-color:var(--accent);background:rgba(255,90,95,.1)}
+.stats{list-style:none;display:flex;gap:28px;margin:32px 0 0;padding:0;flex-wrap:wrap}
+.stats li{color:var(--muted);font-size:.85rem}
+.stats b{display:block;font:500 2rem/1.1 Fraunces,Georgia,serif;color:var(--ink)}
+.heroViz{position:relative;aspect-ratio:1/.92;min-height:300px;border-radius:28px;border:1px solid var(--line);overflow:hidden;
+  background:radial-gradient(closest-side at 50% 48%,rgba(255,90,95,.24),rgba(255,90,95,0) 78%),linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,0))}
+.heroViz canvas{position:absolute;inset:0;width:100%;height:100%;cursor:grab;touch-action:pan-y}
+.heroViz canvas:active{cursor:grabbing}
+.vizHint{position:absolute;top:14px;right:18px;font-size:.76rem;color:var(--muted);pointer-events:none}
+.vizKey{position:absolute;left:18px;bottom:14px;display:flex;align-items:center;gap:8px;font-size:.74rem;color:var(--muted);pointer-events:none}
+.vizKey i{display:block;width:90px;height:6px;border-radius:4px;background:linear-gradient(90deg,#315ce0,#24bee1,#f5dc46,#ff5a5f)}
+#explore{scroll-margin-top:70px;padding-top:8px}
+.rv{opacity:0}
+.rv.in{opacity:1;animation:rvIn .7s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:var(--d,0s)}
+@keyframes rvIn{from{opacity:0;transform:translateY(30px)}}
+@media(max-width:860px){.hero{grid-template-columns:1fr;min-height:0}.heroViz{order:-1}}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
-
 <body>
-
-<header class="topbar">
-  <div class="brand">T<span>◆</span> TENSOR</div>
-  <div class="top-right">
-    <span>Solid Mechanics Studio</span>
-    <span class="badge">BETA</span>
-  </div>
-</header>
-
-<div class="app">
-
-<aside class="sidebar">
-  <div class="side-label">WORKSPACE</div>
-  <button class="side-btn active" id="homeBtn">⌂ &nbsp; Design Studio</button>
-  <button class="side-btn" id="resetBtn">↺ &nbsp; New Model</button>
-  <button class="side-btn" id="exportBtn">↓ &nbsp; Export Model</button>
-
-  <div class="side-label">SECTION LIBRARY</div>
-  <button class="side-btn" data-preset="C">C-section</button>
-  <button class="side-btn" data-preset="I">I-section</button>
-  <button class="side-btn" data-preset="T">T-section</button>
-  <button class="side-btn" data-preset="L">L-section</button>
-  <button class="side-btn" data-preset="Z">Z-section</button>
-  <button class="side-btn" data-preset="Box">Box section</button>
-</aside>
-
+<div id="intro" role="status" aria-label="Aneurix"><div class="icl"></div><div class="icr"></div><div class="cnt" aria-hidden="true"><div><b id="introN">0</b><i id="introB"></i></div></div><div class="ttl"><h1 class="name" aria-hidden="true"></h1><p class="tag">Where engineering meets the artery</p></div><div class="skip">click to skip</div></div>
 <main>
-
-<section class="hero">
-  <div class="eyebrow">GEOMETRY · MATERIALS · MECHANICS</div>
-  <h1>Understand the force behind the form.</h1>
-  <p>
-    Create a cross-section, modify its dimensions, define material
-    properties and loading conditions, and inspect the calculated
-    geometric properties and supported beam response.
-  </p>
-  <button class="btn primary" id="startBtn">Open Design Studio →</button>
-</section>
-
-<div class="grid">
-
-<div class="stack">
-
-<section class="card" id="editor">
-  <div class="card-head">
-    <h2><span class="step">01</span>Cross-section editor</h2>
-    <span class="small-label" id="sectionName">C-section</span>
+<nav id="nav"><a href="#home" class="logo">⌂ Aneurix</a><a href="#sim" data-p="sim">Simulator</a><a href="#rank" data-p="rank">Ranking</a><a href="#inside" data-p="inside">Inside</a><a href="#graphs" data-p="graphs">Graphs</a></nav>
+<section id="v-home" class="view">
+  <div class="hero">
+    <div class="heroTxt">
+      <span class="eyebrow">Aneurix · interactive stent explorer</span>
+      <h1>Which stent for which situation?</h1>
+      <p class="lead">No stent is best everywhere. Pick a medical situation and a stent, watch what happens in the artery, then see how every stent ranks for that job.</p>
+      <p class="heroSub">Aneurix turns solid mechanics into something you can see: pressure, stress, strain and fatigue in aneurysms and narrowed arteries, explored with live sliders instead of equations.</p>
+      <div class="heroBtns">
+        <button type="button" id="heroGo">Start exploring ↓</button>
+        <a class="btn" href="#sim">Open the simulator →</a>
+      </div>
+      <ul class="stats">
+        <li><b>8</b>stent types</li>
+        <li><b>5</b>medical situations</li>
+        <li><b>9</b>properties ranked</li>
+      </ul>
+    </div>
+    <div class="heroViz">
+      <canvas id="heroCv" aria-label="A rotating 3D stent mesh whose colors pulse with stress"></canvas>
+      <div class="vizKey"><span>low stress</span><i></i><span>high stress</span></div>
+      <span class="vizHint">drag to rotate</span>
+    </div>
   </div>
-
-  <div class="tools">
-    <button class="tool active" data-tool="select">Select</button>
-    <button class="tool" data-tool="line">Draw line</button>
-    <button class="tool" data-tool="rect">Rectangle</button>
-    <button class="tool" data-tool="circle">Circle</button>
-    <button class="tool" id="undoBtn">Undo</button>
-    <button class="tool" id="clearBtn">Clear sketch</button>
-  </div>
-
-  <div class="drawing">
-    <svg id="canvas" viewBox="0 0 700 350" aria-label="Cross-section drawing canvas">
-      <defs>
-        <pattern id="gridPattern" width="20" height="20" patternUnits="userSpaceOnUse">
-          <path d="M20 0H0V20" fill="none" stroke="#e9e6f0" stroke-width="1"/>
-        </pattern>
-      </defs>
-      <rect width="700" height="350" fill="url(#gridPattern)"/>
-      <line x1="350" y1="0" x2="350" y2="350"
-        stroke="#cfc9e0" stroke-dasharray="5 5"/>
-      <line x1="0" y1="175" x2="700" y2="175"
-        stroke="#cfc9e0" stroke-dasharray="5 5"/>
-      <g id="presetLayer"></g>
-      <g id="sketchLayer"></g>
-    </svg>
-  </div>
-
-  <div class="drawing-footer">
-    <span id="drawStatus">Choose a preset or select a drawing tool.</span>
-    <span>Units: mm</span>
-  </div>
-
-  <div class="form">
-    <div class="field">
-      <label for="height">Height (mm)</label>
-      <input id="height" type="number" min="1" step="1" value="60">
-    </div>
-    <div class="field">
-      <label for="width">Width (mm)</label>
-      <input id="width" type="number" min="1" step="1" value="100">
-    </div>
-    <div class="field">
-      <label for="thickness">Wall thickness (mm)</label>
-      <input id="thickness" type="number" min="0.1" step="0.1" value="2">
-    </div>
-    <div class="field">
-      <label for="length">Beam length (mm)</label>
-      <input id="length" type="number" min="1" step="10" value="500">
-    </div>
-    <div class="field full">
-      <button class="btn primary" id="applyBtn">Apply dimensions</button>
-    </div>
+  <div id="explore">
+    <h2>Explore Aneurix</h2>
+    <p class="lead" style="margin-bottom:16px">Four tools, one story. Start anywhere.</p>
+    <div class="cards"><a class="card" href="#sim"><i>01</i><b>Watch the artery</b><span>Pick a medical situation and a stent, then watch the blood flow, the bulge or narrowing, and live stress readouts.</span><em>Open →</em></a><a class="card" href="#rank"><i>02</i><b>Stent ranking</b><span>See how all eight stents score for your situation across nine properties, and why.</span><em>Open →</em></a><a class="card" href="#inside"><i>03</i><b>Inside the stent</b><span>A stress map of the strut mesh in 2D and 3D. Squeeze it, crimp it, change the struts.</span><em>Open →</em></a><a class="card" href="#graphs"><i>04</i><b>Graph lab</b><span>Five live graphs: wall stress, material curves, strut width, fatigue and flexibility, each with analysis.</span><em>Open →</em></a></div>
+    <p class="hint">Your situation and stent choice carry across every page.</p>
   </div>
 </section>
-
-<section class="card">
-  <div class="card-head">
-    <h2><span class="step">02</span>Section library</h2>
-    <span class="small-label">Presets</span>
+<div id="shared"><div class="picker">
+    <div class="pickrow">
+      <div><label for="sit">Situation</label>
+        <select id="sit">
+          <option value="aorta">Large aortic aneurysm</option>
+          <option value="brain">Brain aneurysm (small, twisting vessel)</option>
+          <option value="heart">Narrowed heart artery</option>
+          <option value="leg">Narrowed leg artery that bends a lot</option>
+          <option value="young">Narrowed artery in a young patient</option>
+        </select></div>
+      <div><label for="type">Stent</label>
+        <select id="type">
+          <option value="none">No stent</option>
+          <option value="steelG">Stent graft, stainless steel</option>
+          <option value="nitG">Stent graft, nitinol</option>
+          <option value="cocrG">Stent graft, cobalt-chromium</option>
+          <option value="flow">Flow diverter</option>
+          <option value="bms">Bare-metal stent (balloon-expandable)</option>
+          <option value="des">Drug-eluting stent</option>
+          <option value="nitS">Self-expanding nitinol stent (open mesh)</option>
+          <option value="bio">Bioresorbable stent</option>
+        </select></div>
+    </div>
+    <p id="sitBlurb"></p>
+    <dl>
+      <dt>Material</dt><dd id="aMat"></dd>
+      <dt>Opens by</dt><dd id="aOpen"></dd>
+      <dt>Used for</dt><dd id="aUse"></dd>
+      <dt>Mechanics</dt><dd id="aNote"></dd>
+    </dl>
+    <button id="best" type="button">Use the best stent for this situation</button>
   </div>
 
-  <div class="presets">
-    <button class="preset active" data-preset="C"><strong>⊏</strong><span>C-section</span></button>
-    <button class="preset" data-preset="I"><strong>Ⅰ</strong><span>I-section</span></button>
-    <button class="preset" data-preset="T"><strong>⊤</strong><span>T-section</span></button>
-    <button class="preset" data-preset="L"><strong>⌞</strong><span>L-section</span></button>
-    <button class="preset" data-preset="Z"><strong>Ƶ</strong><span>Z-section</span></button>
-    <button class="preset" data-preset="Box"><strong>▣</strong><span>Box section</span></button>
   </div>
-</section>
+<section id="v-sim" class="view"><div class="vessel"><canvas id="flow" width="960" height="300" aria-label="Animated artery, either with a bulge or with a narrowing, and an optional stent"></canvas></div>
 
-</div>
+  <section class="panel">
+    <div>
+      <div class="control an"><label for="d">Bulge diameter <output id="dOut"></output></label>
+        <input id="d" type="range" min="20" max="80" step="1" value="56"></div>
+      <div class="control st"><label for="nar">Plaque narrowing <output id="narOut"></output></label>
+        <input id="nar" type="range" min="20" max="85" step="1" value="60"></div>
+      <div class="control"><label for="p">Blood pressure <output id="pOut"></output></label>
+        <input id="p" type="range" min="60" max="220" step="5" value="120"></div>
+      <div class="control"><label for="r0">Healthy radius <output id="r0Out"></output></label>
+        <input id="r0" type="range" min="8" max="16" step="0.5" value="12"></div>
+      <div class="control"><label for="t0">Healthy wall thickness <output id="t0Out"></output></label>
+        <input id="t0" type="range" min="1" max="3" step="0.1" value="2"></div>
+      <div class="control an"><label for="s">Wall strength <output id="sOut"></output></label>
+        <input id="s" type="range" min="200" max="1000" step="25" value="500"></div>
+      <div class="control"><label for="Ea">Artery wall stiffness <output id="EaOut"></output></label>
+        <input id="Ea" type="range" min="0.5" max="3" step="0.1" value="1"></div>
+      <div class="control"><label for="Es">Stent stiffness (E × thickness) <output id="EsOut"></output></label>
+        <input id="Es" type="range" min="0.1" max="40" step="0.1" value="1" disabled></div>
+    </div>
+    <div>
+      <div class="readout an">
+        <div class="big"><b id="rRatio">-</b><span>share of wall strength used</span></div>
+        <div class="big"><b id="rStress">-</b><span>wall stress now</span></div>
+        <div><b id="rWithout">-</b><span>wall stress without a stent</span></div>
+        <div><b id="rStent">-</b><span>of the load carried by the stent</span></div>
+        <div><b id="rSac">-</b><span>blood flow into the bulge</span></div>
+        <div><b id="rJump">-</b><span>stiffness jump at the stent ends</span></div>
+      </div>
+      <div class="readout st">
+        <div class="big"><b id="sOpen">-</b><span>of the healthy diameter at the narrowest point</span></div>
+        <div class="big"><b id="sJet">-</b><span>blood speed there, compared with normal</span></div>
+        <div><b id="sBefore">-</b><span>open before a stent</span></div>
+        <div><b id="sJump">-</b><span>stiffness jump at the stent ends</span></div>
+      </div>
+      <p id="verdict"></p>
+    </div>
+  </section>
 
-<div class="stack">
+  </section>
+<section id="v-rank" class="view"><h2>How every stent ranks here</h2>
+  <p class="lead" style="margin-bottom:10px">Each stent has a rating for nine properties. The situation decides how much each property matters.</p>
+  <div id="rank"></div>
+  <p id="why"></p>
 
-<section class="card">
-  <div class="card-head">
-    <h2><span class="step">03</span>Material & loading</h2>
-  </div>
+  </section>
+<section id="v-inside" class="view"><section id="msec">
+    <h2>Inside the stent</h2>
+    <p class="lead" style="margin-bottom:14px">The stent you chose, on its own with no artery around it. The colors show how hard each part of the metal is working. <span id="mLine"></span></p>
+    <div class="split">
+      <div class="pnl">
+        <div class="pcell">
+          <h4>Loading mode</h4>
+          <div class="modes" role="radiogroup" aria-label="Load case">
+            <label><input type="radio" name="mload" value="sq" checked> Squeeze</label>
+            <label><input type="radio" name="mload" value="cr"> Crimp</label>
+            <label><input type="radio" name="mload" value="dp"> Deploy</label>
+          </div>
+        </div>
+        <div class="pcell" id="dpCell">
+          <h4>Deployment animation</h4>
+          <div class="modes steps" role="radiogroup" aria-label="Simulation step">
+            <label><input type="radio" name="mstep" value="cr" checked> Crimped</label>
+            <label><input type="radio" name="mstep" value="ex"> Expanded</label>
+            <label><input type="radio" name="mstep" value="rb"> Rebound</label>
+          </div>
+          <div><button type="button" id="dpPlay">▶ Play the sequence</button></div>
+          <p class="ctlhint">Choose Deploy under Loading mode to use this.</p>
+        </div>
+        <div class="pcell">
+          <h4>Parameters</h4>
+          <div class="control sq"><label for="mp">Outside pressure <output id="mpOut"></output></label>
+          <input id="mp" type="range" min="0" max="200" step="5" value="60"></div>
+        <div class="control cr"><label for="mc">Crimped diameter <output id="mcOut"></output></label>
+          <input id="mc" type="range" min="40" max="100" step="1" value="50"></div>
+        <div class="control"><label for="mw">Strut width <output id="mwOut"></output></label>
+          <input id="mw" type="range" min="50" max="200" step="5" value="90"></div>
+        <div class="control"><label for="mt">Strut thickness <output id="mtOut"></output></label>
+          <input id="mt" type="range" min="50" max="200" step="5" value="90"></div>
+        <div class="control"><label for="mL">Strut length <output id="mLOut"></output></label>
+          <input id="mL" type="range" min="0.8" max="2" step="0.1" value="1.2"></div>
+        <div class="control"><label for="mR">Stent radius <output id="mROut"></output></label>
+          <input id="mR" type="range" min="1" max="5" step="0.25" value="1.5"></div>
+        <div class="control"><label for="mN">Crowns per ring <output id="mNOut"></output></label>
+          <input id="mN" type="range" min="6" max="12" step="1" value="8"></div>
+        <div class="control"><label><input id="manim" type="checkbox" checked style="accent-color:#ff5a5f"> Animate the load</label></div>
+        </div>
+      </div>
+      <div class="pnl pview">
+        <div class="prow">
+          <div class="pcell">
+            <h4>Viewport controls</h4>
+            <div class="modes" role="radiogroup" aria-label="View">
+              <label><input type="radio" name="mview" value="2d" checked> 2D map</label>
+              <label><input type="radio" name="mview" value="3d" id="mview3d"> 3D view</label>
+            </div>
+          </div>
+          <div class="pcell">
+            <h4>Display metric</h4>
+            <div class="modes" role="radiogroup" aria-label="Color by">
+              <label><input type="radio" name="mcol" value="st" checked> Stress</label>
+              <label><input type="radio" name="mcol" value="pe"> PEEQ (plastic strain)</label>
+            </div>
+          </div>
+        </div>
+        <div class="pcell">
+          <div class="viewpair"><div class="sstage"><canvas id="sc" width="960" height="440" aria-label="Stent end view and unrolled mesh colored by stress"></canvas><canvas id="sc3" width="960" height="440" aria-label="3D stent colored by stress"></canvas></div></div>
+          <p id="m3hint" style="color:var(--muted);font-size:.85rem;margin:8px 0 0">In the 3D view, drag to rotate and scroll to zoom.</p>
+          <div class="slegend">
+      <div class="sbar"></div>
+      <span style="left:0%;transform:none">0</span>
+      <span id="lgMid" style="left:50%">material limit (1.0)</span>
+      <span style="left:100%;transform:translateX(-100%)">1.5 and above</span>
+    </div>
+    <p id="lgCap" style="color:var(--muted);font-size:.85rem;margin:0"></p>
+        </div>
+      </div>
+    </div>
+    <div class="descs">
+      <p id="peeqLine"></p>
+      <div class="readout">
+          <div><b id="mrA">-</b><span id="mlA"></span></div>
+          <div><b id="mrB">-</b><span id="mlB"></span></div>
+          <div><b id="mrC">-</b><span id="mlC"></span></div>
+          <div><b id="mrD">-</b><span id="mlD"></span></div>
+        </div>
+        <p id="mverdict" style="margin-top:20px;padding:12px 16px;border-left:4px solid var(--accent);background:rgba(255,90,95,.08);border-radius:0 10px 10px 0;font-weight:600"></p>
+      <div id="dpbox">
+          <p style="margin:0"><a href="#graphs" id="toFatigue" style="color:var(--accent);font-weight:600">See the fatigue analysis for this stent →</a></p>
+          <p id="dpNote">Von Mises contour: the single equivalent stress that combines bending, shear and axial load, σ<sub>vm</sub> = √(σ² + 3τ²), shown as a share of the material limit (blue = low, red = at the limit, purple = beyond it). Crowns are highest; mid-strut keeps a small share from shear instead of dropping to zero.</p>
+        </div>
+      <p class="note" style="margin-top:18px">Stent model: each ring is a zigzag of beams joined at crowns. Squeeze: F = p·2πR·h / 2N per crown, M = (F/2)·L·cos θ, and the peak stress is σ = 6M / (t·w²), so thinner struts are far weaker. Crimp: the bending strain is ε ≈ 3·w·Δ / L². The bending moment is largest at the crowns and zero mid-strut, so colors fade along each strut. Steel and cobalt-chromium yield above about 0.15 to 0.2% strain and keep a permanent set, while nitinol recovers strains up to about 6%. Mesh motion is exaggerated in the squeeze case. Material values are simplified and illustrative.</p>
+    </div>
+  </section>
 
-  <div class="form">
-    <div class="field full">
-      <label for="material">Material</label>
-      <select id="material">
-        <option value="aluminium">Aluminium</option>
-        <option value="steel">Structural steel</option>
-        <option value="custom">Custom material</option>
+  </section>
+<section id="v-graphs" class="view"><section id="gsec">
+    <h2>Graph analysis</h2>
+    <p class="lead" style="margin-bottom:14px">Pick a graph. Each one updates live from the sliders above and comes with a short analysis.</p>
+    <div class="picker" style="margin-top:0;margin-bottom:14px">
+      <label for="gsel">Choose a graph</label>
+      <select id="gsel">
+        <option value="g1">Wall stress vs bulge diameter, with and without stents</option>
+        <option value="g2">Stress-strain curves of the stent materials</option>
+        <option value="g3">Peak crown stress vs strut width</option>
+        <option value="g4">Fatigue: Goodman and Gerber diagram</option>
+        <option value="g5">Flexibility: Bending Moment vs. Curvature</option>
       </select>
+      <div id="flexBox" style="display:none;margin-top:14px">
+        <div class="pickrow">
+          <div class="control"><label for="gfw">Strut width <output id="gfwOut"></output></label>
+            <input id="gfw" type="range" min="50" max="200" step="5" value="90"></div>
+          <div class="control"><label for="gft">Strut thickness <output id="gftOut"></output></label>
+            <input id="gft" type="range" min="50" max="200" step="5" value="90"></div>
+        </div>
+        <p style="color:var(--muted);font-size:.85rem;margin:6px 0 0">These are the same two sliders as on "Inside the stent": moving either one here moves it there too. The material comes from the stent chosen in the simulator.</p>
+      </div>
+      <div id="fatBox" style="display:none;margin-top:14px">
+        <div class="modes" role="radiogroup" aria-label="Fatigue criterion">
+          <label><input type="radio" name="fcrit" value="gd" checked> Goodman</label>
+          <label><input type="radio" name="fcrit" value="gb"> Gerber</label>
+        </div>
+        <div class="pickrow" style="margin-top:14px">
+          <div class="control"><label for="fPulse">Pulse pressure <output id="fPulseOut">40 mmHg</output></label>
+            <input id="fPulse" type="range" min="20" max="100" step="5" value="40"></div>
+          <div class="control"><label for="fMotion">Vessel motion per heartbeat <output id="fMotionOut">0.3%</output></label>
+            <input id="fMotion" type="range" min="0" max="2" step="0.1" value="0.3"></div>
+        </div>
+        <div class="control"><label><input id="fRes" type="checkbox" checked style="accent-color:#ff5a5f"> Include the residual stress left by deployment</label></div>
+        <p style="color:var(--muted);font-size:.85rem;margin:6px 0 0">Uses the blood pressure slider as systolic pressure and the strut sliders from "Inside the stent".</p>
+      </div>
     </div>
+    <canvas id="gc" width="960" height="460" aria-label="Graph chosen from the menu"></canvas>
+    <dl style="margin-top:18px;grid-template-columns:110px 1fr">
+      <dt>What you see</dt><dd id="gNums"></dd>
+      <dt>Trend</dt><dd id="gTrend"></dd>
+      <dt>Theory</dt><dd id="gTheory"></dd>
+      <dt>Meaning</dt><dd id="gMean"></dd>
+    </dl>
+  </section>
 
-    <div class="field">
-      <label for="young">Young's modulus (GPa)</label>
-      <input id="young" type="number" min="0.001" step="1" value="69">
-    </div>
-
-    <div class="field">
-      <label for="shear">Shear modulus (GPa)</label>
-      <input id="shear" type="number" min="0.001" step="1" value="26">
-    </div>
-
-    <div class="field full">
-      <label for="loadType">Load type</label>
-      <select id="loadType">
-        <option value="point">Cantilever tip point load</option>
-        <option value="distributed">Uniformly distributed load</option>
-        <option value="moment">End moment</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label for="load">Load magnitude</label>
-      <input id="load" type="number" min="0" step="1" value="100">
-    </div>
-
-    <div class="field">
-      <label for="loadUnit">Load unit</label>
-      <select id="loadUnit">
-        <option value="N">N</option>
-        <option value="kN">kN</option>
-      </select>
-    </div>
-
-    <div class="field full">
-      <label for="loadPosition">Load application point, x (mm)</label>
-      <input id="loadPosition" type="number" min="0" value="500">
-    </div>
-
-    <div class="field full">
-      <label for="direction">Load direction</label>
-      <select id="direction">
-        <option value="vertical">Vertical</option>
-        <option value="horizontal">Horizontal</option>
-      </select>
-    </div>
-
-    <div class="field full">
-      <label for="wallType">Section model</label>
-      <select id="wallType">
-        <option value="thin">Thin-walled</option>
-        <option value="thick">Thick-walled</option>
-      </select>
-    </div>
-  </div>
-</section>
-
-<section class="card">
-  <div class="card-head">
-    <h2><span class="step">04</span>Calculated properties</h2>
-    <span class="small-label" id="calcStatus">Ready</span>
-  </div>
-
-  <div class="metrics">
-    <div class="metric">
-      <span>Cross-sectional area</span>
-      <strong id="areaResult">—</strong>
-    </div>
-    <div class="metric">
-      <span>Centroid x</span>
-      <strong id="cxResult">—</strong>
-    </div>
-    <div class="metric">
-      <span>Centroid y</span>
-      <strong id="cyResult">—</strong>
-    </div>
-    <div class="metric">
-      <span>Second moment Ixx</span>
-      <strong id="ixResult">—</strong>
-    </div>
-  </div>
-
-  <div class="result-list">
-    <div class="result-row">
-      <span>Second moment Iyy</span>
-      <strong id="iyResult">—</strong>
-    </div>
-    <div class="result-row">
-      <span>Load applied</span>
-      <strong id="loadResult">—</strong>
-    </div>
-    <div class="result-row">
-      <span>Estimated tip deflection</span>
-      <strong id="deflectionResult">—</strong>
-    </div>
-    <div class="result-row">
-      <span>Shear-centre coordinates</span>
-      <strong id="scResult">Not calculated</strong>
-    </div>
-  </div>
-
-  <div class="notice warning" id="resultNotice">
-    Geometric properties use a thin-wall centreline approximation.
-    Deflection is available only for the supported cantilever
-    beam model. The shear-centre solver is not implemented.
-  </div>
-
-  <button class="btn primary full-btn" id="calculateBtn">Recalculate model</button>
-  <button class="btn secondary full-btn" id="downloadBtn">Export model as JSON ↓</button>
-</section>
-
-</div>
-</div>
-
-<footer>
-  <span>TENSOR · Solid Mechanics Project</span>
-  <span>Engineering calculations require validation.</span>
-</footer>
+  </section>
+<p class="note">Models: for a bulge, hoop stress σ = P·r/t with t = r₀t₀/r, and a covered stent keeps the wall share Eₐt / (Eₐt + Eₛtₛ). For a narrowing, the stent pushes outward against the plaque like two springs in opposition, so the lumen opens by a fraction that grows with the stent's radial strength. Ratings, weights and stiffness values are illustrative teaching numbers, not clinical advice. Real choices depend on many more factors, and the brain case is drawn at the same scale for simplicity.</p>
 
 </main>
-</div>
 
 <script>
-"use strict";
-
 const $ = id => document.getElementById(id);
-const NS = "http://www.w3.org/2000/svg";
+const K = 0.133322, S = 3.4;
+const ZC = { safe:"#e3b2a8", warn:"#f2b64d", danger:"#ff3b3b" };
+// property order: seal, load, flex, radial, fatigue, gentle, thin, drug, temporary
+const PN = ["sealing off the bulge","taking load off the wall","flexibility","radial strength","fatigue life","being gentle on the vessel","fitting small vessels","stopping re-narrowing","leaving nothing behind"];
+const TYPES = {
+  none:  { name:"No stent", covered:false, Es:0, mat:"No device", open:"-", use:"-", note:"Nothing shares the load or holds the artery open." },
+  steelG:{ name:"Stent graft, stainless steel", covered:true, Es:14, col:"#cfd8dc", pitch:30, lw:1.6, r:[5,5,2,5,4,1,1,0,0], mat:"Stainless steel frame with a fabric cover", open:"Balloon or self-expanding", use:"Aortic aneurysm", note:"Very stiff. It takes most of the load, but the stiffness jump at its ends can injure the artery." },
+  nitG:  { name:"Stent graft, nitinol", covered:true, Es:6, col:"#9fd8da", pitch:30, lw:1.6, r:[5,3,5,3,5,4,2,0,0], mat:"Nitinol frame with a fabric cover", open:"Self-expanding (superelastic)", use:"Aortic aneurysm, bending vessels", note:"Superelastic and flexible, so gentler on the artery, but it carries less of the load." },
+  cocrG: { name:"Stent graft, cobalt-chromium", covered:true, Es:22, col:"#c8cfe0", pitch:24, lw:1.3, r:[5,5,2,5,5,2,3,0,0], mat:"Cobalt-chromium frame with a fabric cover", open:"Balloon-expandable", use:"Aortic and other large arteries", note:"A stronger alloy allows thinner struts for the same strength, with high radial strength." },
+  flow:  { name:"Flow diverter", covered:true, Es:0.2, col:"#8fe3e0", pitch:9, lw:1, r:[3,1,5,1,4,5,5,0,0], mat:"Very fine nitinol or cobalt-chromium braid", open:"Self-expanding", use:"Brain aneurysm", note:"A dense mesh across the aneurysm neck. It relieves little load but redirects blood so the bulge clots." },
+  bms:   { name:"Bare-metal stent", covered:false, Es:5, col:"#cfd8dc", pitch:46, lw:2, r:[0,0,2,4,4,2,4,0,0], mat:"Cobalt-chromium or steel mesh", open:"A balloon pushes it open past its elastic limit", use:"Narrowed arteries", note:"An open mesh that props an artery open. It does not seal an aneurysm." },
+  des:   { name:"Drug-eluting stent", covered:false, Es:5, col:"#e6c36b", pitch:46, lw:2, r:[0,0,2,4,4,2,4,5,0], mat:"Metal mesh with a drug coating", open:"Balloon-expandable", use:"Narrowed heart arteries", note:"Open-mesh mechanics like a bare-metal stent, plus a drug that slows re-narrowing." },
+  nitS:  { name:"Self-expanding nitinol stent", covered:false, Es:3, col:"#7fd3d0", pitch:34, lw:1.8, r:[0,0,5,3,5,4,3,0,0], mat:"Nitinol mesh", open:"Self-expanding (superelastic)", use:"Bending leg and neck arteries", note:"Flexes with the artery and springs back after being squeezed. No seal, so no aneurysm relief." },
+  bio:   { name:"Bioresorbable stent", covered:false, Es:2, col:"rgba(255,184,112,.85)", pitch:40, lw:2.4, dash:true, r:[0,0,2,2,2,4,3,3,5], mat:"Magnesium or a polymer", open:"Balloon-expandable", use:"Narrowed arteries", note:"Dissolves over months to years. It needs thicker struts and weakens as it dissolves." }
+};
+const SITS = {
+  aorta:{ mode:"an", w:[3,3,1,2,3,2,0,0,0], pre:{ d:56, r0:12, t0:2, p:120 }, blurb:"A big, straight vessel under high pressure. The job is to seal the bulge and take load off the thin wall for decades." },
+  brain:{ mode:"an", w:[3,1,3,1,2,3,3,0,0], pre:{ d:28, r0:8, t0:1, p:100 }, blurb:"A tiny vessel with sharp turns. The device must be flexible, low-profile and gentle, and redirecting blood can be enough." },
+  heart:{ mode:"sten", w:[0,0,1,3,3,1,3,3,0], pre:{ nar:60, r0:8, t0:1.5, p:120 }, blurb:"Plaque narrows a small artery. The stent must push hard enough to hold it open, survive millions of heartbeats, and stop re-narrowing." },
+  leg:  { mode:"sten", w:[0,0,3,2,3,2,1,1,0], pre:{ nar:55, r0:10, t0:2, p:120 }, blurb:"The leg artery is bent, squeezed and twisted with every step. Flexibility and fatigue life matter most." },
+  young:{ mode:"sten", w:[0,0,1,2,2,2,2,2,3], pre:{ nar:60, r0:8, t0:1.5, p:120 }, blurb:"A long life lies ahead, so a permanent metal cage is a long-term burden. A stent that dissolves after healing is attractive." }
+};
+const thick  = (r, r0, t0) => r0 * t0 / r;
+const stress = (P, r, r0, t0) => P * r / thick(r, r0, t0);
+const zoneOf = x => x < .5 ? "safe" : x < .8 ? "warn" : "danger";
+const score = (key, sit) => { let a = 0, b = 0; sit.w.forEach((w, i) => { a += w * TYPES[key].r[i]; b += w * 5; }); return Math.round(100 * a / b); };
 
-let section = "C";
-let tool = "select";
-let segments = [];
-let sketch = [];
-let history = [];
-let activeShape = null;
+function inputs() {
+  const r0 = +$("r0").value, key = $("type").value, sit = SITS[$("sit").value];
+  return { P:+$("p").value * K, mm:+$("p").value, r0, t0:+$("t0").value, st:+$("s").value, nar:+$("nar").value,
+           r:Math.max(+$("d").value / 2, r0), key, T:TYPES[key], has:key !== "none", mode:sit.mode,
+           Ea:+$("Ea").value, Es:+$("Es").value };
+}
+const wallShare = v => { if (!v.T.covered) return 1; const Eat = v.Ea * thick(v.r, v.r0, v.t0); return Eat / (Eat + v.Es); };
+const openFrac = v => v.has ? v.T.r[3] / (v.T.r[3] + 1.2) : 0;     // radial strength against the plaque
+let v = inputs(), zone = "safe";
 
-function element(tag, attrs = {}) {
-  const e = document.createElementNS(NS, tag);
-  Object.entries(attrs).forEach(([k,v]) => e.setAttribute(k,v));
-  return e;
+const cv = $("flow"), g = cv.getContext("2d"), W = cv.width, H = cv.height, cy = H / 2;
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const bump = (x, k) => Math.exp(-Math.pow((x - W / 2) / (W * k), 2));
+const radiusAt = (x, pulse) => (v.r0 + (v.r - v.r0) * bump(x, .13)) * pulse;
+
+const words = ["pressure", "σ = P·r/t", "wall", "hoop stress", "1/r²", "flow"];
+const parts = [];
+for (let i = 0; i < 60; i++) parts.push({ x:Math.random() * W, f:Math.random() * 1.7 - .85, word:null });
+words.forEach((w, i) => parts.push({ x:i * (W / words.length), f:i % 2 ? .45 : -.45, word:w }));
+
+function shape(rFn) {
+  g.beginPath();
+  for (let x = 0; x <= W; x += 6) g.lineTo(x, cy - rFn(x) * S);
+  for (let x = W; x >= 0; x -= 6) g.lineTo(x, cy + rFn(x) * S);
+  g.closePath();
 }
 
-function dims() {
-  return {
-    h: Number($("height").value),
-    b: Number($("width").value),
-    t: Number($("thickness").value),
-    L: Number($("length").value)
-  };
-}
+function frame(t) {
+  const pulse = 1 + 0.012 * Math.sin(t / 260), sten = v.mode === "sten";
+  const Lh = v.r0 - v.t0, Lmin0 = Lh * (1 - v.nar / 100), o = openFrac(v);
+  const L = x => { const n = Lh - (Lh - Lmin0) * bump(x, .16); return n + (Lh - n) * o; };   // lumen radius in a narrowed artery
+  const R = sten ? (() => v.r0 * pulse) : (x => radiusAt(x, pulse));
+  const sealed = !sten && v.has && v.T.covered, rs = Lh;
+  g.clearRect(0, 0, W, H);
 
-function validDimensions(d) {
-  return Number.isFinite(d.h) && Number.isFinite(d.b) &&
-    Number.isFinite(d.t) && Number.isFinite(d.L) &&
-    d.h > 0 && d.b > 0 && d.t > 0 && d.L > 0 &&
-    d.t < Math.min(d.h,d.b);
-}
+  shape(R); g.fillStyle = sten ? ZC.safe : ZC[zone];
+  g.shadowColor = !sten && zone === "danger" ? "#ff3b3b" : "transparent"; g.shadowBlur = !sten && zone === "danger" ? 24 : 0;
+  g.fill(); g.shadowBlur = 0;
 
-/*
-  Segments represent wall centre-lines.
-  Coordinates are converted to millimetres for calculations.
-*/
-function buildSegments() {
-  const {h,b,t} = dims();
-  const H = h/2;
-  const B = b/2;
+  if (sten) {
+    shape(() => Lh); g.fillStyle = "#d9b866"; g.fill();           // plaque
+    shape(L);
+  } else shape(x => R(x) - thick(R(x), v.r0, v.t0));
+  const grd = g.createLinearGradient(0, 0, 0, H);
+  if (sealed) { grd.addColorStop(0, "#2a0509"); grd.addColorStop(1, "#2a0509"); }
+  else { grd.addColorStop(0, "#5a0f1b"); grd.addColorStop(.5, "#33060e"); grd.addColorStop(1, "#5a0f1b"); }
+  g.fillStyle = grd; g.fill();
 
-  switch(section) {
-    case "C":
-      return [
-        {x1:-B,y1:-H,x2:-B,y2:H},
-        {x1:-B,y1:-H,x2:B,y2:-H},
-        {x1:-B,y1:H,x2:B,y2:H}
-      ];
-
-    case "I":
-      return [
-        {x1:-B,y1:-H,x2:B,y2:-H},
-        {x1:0,y1:-H,x2:0,y2:H},
-        {x1:-B,y1:H,x2:B,y2:H}
-      ];
-
-    case "T":
-      return [
-        {x1:-B,y1:-H,x2:B,y2:-H},
-        {x1:0,y1:-H,x2:0,y2:H}
-      ];
-
-    case "L":
-      return [
-        {x1:-B,y1:-H,x2:-B,y2:H},
-        {x1:-B,y1:H,x2:B,y2:H}
-      ];
-
-    case "Z":
-      return [
-        {x1:-B,y1:-H,x2:B,y2:-H},
-        {x1:0,y1:-H,x2:0,y2:H},
-        {x1:-B,y1:H,x2:B,y2:H}
-      ];
-
-    case "Box":
-      return [
-        {x1:-B,y1:-H,x2:B,y2:-H},
-        {x1:B,y1:-H,x2:B,y2:H},
-        {x1:B,y1:H,x2:-B,y2:H},
-        {x1:-B,y1:H,x2:-B,y2:-H}
-      ];
-
-    case "Custom":
-      return sketch
-        .filter(s => s.type === "line")
-        .map(s => ({
-          x1: (s.x1-350)/2,
-          y1: (175-s.y1)/2,
-          x2: (s.x2-350)/2,
-          y2: (175-s.y2)/2
-        }));
-
-    default:
-      return [];
-  }
-}
-
-/*
-  Thin-wall centreline approximations:
-  A = sum(t * length)
-  Centroid and second moments are integrated along each straight segment.
-  These properties do not include local corner radii or detailed
-  finite-thickness junction geometry.
-*/
-function sectionProperties(lines,t) {
-  const usable = lines.map(s => {
-    const dx = s.x2-s.x1;
-    const dy = s.y2-s.y1;
-    const length = Math.hypot(dx,dy);
-    return {...s, dx, dy, length, A:t*length};
-  }).filter(s => s.length > 0);
-
-  if (!usable.length) throw new Error("Draw at least one line segment.");
-
-  const area = usable.reduce((sum,s) => sum+s.A,0);
-
-  if (!(area > 0)) throw new Error("Section area must be positive.");
-
-  const cx = usable.reduce((sum,s) =>
-    sum+s.A*(s.x1+s.x2)/2,0)/area;
-
-  const cy = usable.reduce((sum,s) =>
-    sum+s.A*(s.y1+s.y2)/2,0)/area;
-
-  let Ixx = 0, Iyy = 0, Ixy = 0;
-
-  usable.forEach(s => {
-    const mx = (s.x1+s.x2)/2-cx;
-    const my = (s.y1+s.y2)/2-cy;
-
-    Ixx += t*s.length*(my*my+s.dy*s.dy/12);
-    Iyy += t*s.length*(mx*mx+s.dx*s.dx/12);
-    Ixy += t*s.length*(mx*my+s.dx*s.dy/12);
-  });
-
-  return {area,cx,cy,Ixx,Iyy,Ixy,segments:usable};
-}
-
-function drawModel() {
-  const layer = $("presetLayer");
-  layer.replaceChildren();
-
-  const {h,b,t} = dims();
-  const scale = Math.min(240/h,240/b,2.4);
-  const H = h*scale, B = b*scale;
-  const x = 350-B/2, y = 175-H/2;
-  const T = Math.max(2,t*scale);
-
-  let path = "";
-
-  if(section === "C") {
-    path = `M ${x} ${y} L ${x+B} ${y}
-      M ${x} ${y} L ${x} ${y+H}
-      M ${x} ${y+H} L ${x+B} ${y+H}`;
-  } else if(section === "I") {
-    path = `M ${x} ${y} L ${x+B} ${y}
-      M 350 ${y} L 350 ${y+H}
-      M ${x} ${y+H} L ${x+B} ${y+H}`;
-  } else if(section === "T") {
-    path = `M ${x} ${y} L ${x+B} ${y}
-      M 350 ${y} L 350 ${y+H}`;
-  } else if(section === "L") {
-    path = `M ${x} ${y} L ${x} ${y+H}
-      M ${x} ${y+H} L ${x+B} ${y+H}`;
-  } else if(section === "Z") {
-    path = `M ${x} ${y} L ${x+B} ${y}
-      M 350 ${y} L 350 ${y+H}
-      M ${x} ${y+H} L ${x+B} ${y+H}`;
-  } else if(section === "Box") {
-    path = `M ${x} ${y} L ${x+B} ${y}
-      L ${x+B} ${y+H} L ${x} ${y+H} Z`;
-  } else if(section === "Custom") {
-    path = sketch.filter(s => s.type==="line")
-      .map(s => `M ${s.x1} ${s.y1} L ${s.x2} ${s.y2}`)
-      .join(" ");
-  }
-
-  if(path) {
-    layer.appendChild(element("path", {
-      d:path, fill:"none", stroke:"#6558d9",
-      "stroke-width":Math.max(3,T),
-      "stroke-linecap":"round",
-      "stroke-linejoin":"round"
-    }));
-  }
-
-  sketch.forEach(s => {
-    let e;
-    if(s.type==="line") {
-      e=element("line",{
-        x1:s.x1,y1:s.y1,x2:s.x2,y2:s.y2,
-        stroke:"#e88c61","stroke-width":3
-      });
-    } else if(s.type==="rect") {
-      e=element("rect",{
-        x:Math.min(s.x1,s.x2),y:Math.min(s.y1,s.y2),
-        width:Math.abs(s.x2-s.x1),height:Math.abs(s.y2-s.y1),
-        fill:"#ffe3d4",stroke:"#e88c61","stroke-width":2
-      });
-    } else if(s.type==="circle") {
-      e=element("circle",{
-        cx:s.x1,cy:s.y1,
-        r:Math.hypot(s.x2-s.x1,s.y2-s.y1),
-        fill:"#ffe3d4",stroke:"#e88c61","stroke-width":2
-      });
+  if (sealed) {
+    const sg = g.createLinearGradient(0, cy - rs * S, 0, cy + rs * S);
+    sg.addColorStop(0, "#5a0f1b"); sg.addColorStop(.5, "#33060e"); sg.addColorStop(1, "#5a0f1b");
+    g.fillStyle = sg; g.fillRect(0, cy - rs * S, W, 2 * rs * S);
+    const sacTop = cy - (R(W / 2) - thick(R(W / 2), v.r0, v.t0)) * S;
+    if (cy - rs * S - sacTop > 22) {
+      g.font = "italic 13px Fraunces, Georgia, serif"; g.fillStyle = "rgba(255,200,195,.55)"; g.textAlign = "center";
+      g.fillText(v.key === "flow" ? "blood in the sac slowly clots" : "blood in the sac barely moves", W / 2, (sacTop + cy - rs * S) / 2 + 4);
+      g.textAlign = "left";
     }
-    if(e) $("sketchLayer").appendChild(e);
-  });
-
-  $("sectionName").textContent = section+"-section";
-  document.querySelectorAll("[data-preset]").forEach(btn => {
-    btn.classList.toggle("active",btn.dataset.preset===section);
-  });
-}
-
-function recalculate() {
-  const d=dims();
-
-  if(!validDimensions(d)) {
-    $("calcStatus").textContent="Invalid inputs";
-    $("resultNotice").className="notice warning";
-    $("resultNotice").textContent=
-      "Check your dimensions. Values must be positive, and thickness must be smaller than both height and width.";
-    return;
   }
+  if (sten) { g.font = "italic 13px Fraunces, Georgia, serif"; g.fillStyle = "rgba(60,35,5,.8)"; g.fillText("plaque", W / 2 - 22, cy - Lh * S + 14); }
 
-  try {
-    const lines=buildSegments();
-    const p=sectionProperties(lines,d.t);
-
-    $("areaResult").textContent=p.area.toFixed(2)+" mm²";
-    $("cxResult").textContent=p.cx.toFixed(2)+" mm";
-    $("cyResult").textContent=p.cy.toFixed(2)+" mm";
-    $("ixResult").textContent=p.Ixx.toExponential(3);
-    $("iyResult").textContent=p.Iyy.toExponential(3);
-
-    const rawLoad=Number($("load").value);
-    const loadUnit=$("loadUnit").value;
-    const E=Number($("young").value)*1000;
-    const loadPosition=Number($("loadPosition").value);
-    const P=rawLoad*(loadUnit==="kN"?1000:1);
-
-    $("loadResult").textContent=rawLoad+" "+loadUnit;
-    $("scResult").textContent="Not calculated";
-
-    if(!Number.isFinite(P) || P<0 ||
-       !Number.isFinite(E) || E<=0 ||
-       !Number.isFinite(loadPosition) || loadPosition<0) {
-      throw new Error("Check load, modulus, and load position values.");
+  const base = reduce ? 0 : 0.7 + v.mm / 150;
+  for (const p of parts) {
+    const rm = R(p.x), inner = sten ? L(p.x) : sealed ? rs : rm - thick(rm, v.r0, v.t0);
+    const gain = sten ? Math.min(Math.pow(Lh / L(p.x), 2), 5) : sealed ? 1 : Math.pow(v.r0 / rm, 2);
+    p.x += base * gain * 2;
+    if (p.x > W + 80) p.x = -80;
+    const y = cy + p.f * inner * S * .85;
+    if (p.word) { g.font = "italic 14px Fraunces, Georgia, serif"; g.fillStyle = "rgba(255,232,226,.9)"; g.fillText(p.word, p.x, y + 4); }
+    else {
+      g.fillStyle = "#e8333f"; g.beginPath(); g.ellipse(p.x, y, 7, 4.5, 0, 0, 6.283); g.fill();
+      g.fillStyle = "rgba(255,150,150,.55)"; g.beginPath(); g.ellipse(p.x, y, 3, 1.8, 0, 0, 6.283); g.fill();
     }
+  }
 
-    let delta=null;
-    const L=d.L;
-    const type=$("loadType").value;
-
-    /*
-      Euler-Bernoulli cantilever equations:
-      tip point load: delta = P L^3 / (3 E I)
-      full-span UDL: delta = w L^4 / (8 E I)
-      end moment: delta = M L^2 / (2 E I)
-      These equations apply only to the stated idealized load cases.
-    */
-    if(type==="point" && loadPosition===L) {
-      delta=P*Math.pow(L,3)/(3*E*p.Ixx);
-    } else if(type==="distributed") {
-      delta=P*Math.pow(L,4)/(8*E*p.Ixx);
-    } else if(type==="moment") {
-      delta=P*Math.pow(L,2)/(2*E*p.Ixx);
+  if (v.has) {                                         // the mesh, drawn over the flow
+    const T = v.T, mr = x => sten ? L(x) : rs;
+    g.strokeStyle = T.col; g.lineWidth = T.lw; g.setLineDash(T.dash ? [7, 5] : []); g.beginPath();
+    for (let x = -T.pitch; x < W + T.pitch; x += T.pitch) {
+      g.moveTo(x, cy - mr(x) * S); g.lineTo(x + T.pitch, cy + mr(x + T.pitch) * S);
+      g.moveTo(x + T.pitch, cy - mr(x + T.pitch) * S); g.lineTo(x, cy + mr(x) * S);
     }
+    g.stroke(); g.setLineDash([]); g.lineWidth = 3; g.beginPath();
+    for (let x = 0; x <= W; x += 6) x ? g.lineTo(x, cy - mr(x) * S) : g.moveTo(x, cy - mr(x) * S);
+    for (let x = 0; x <= W; x += 6) x ? g.lineTo(x, cy + mr(x) * S) : g.moveTo(x, cy + mr(x) * S);
+    g.stroke();
+  }
+  if (!reduce) requestAnimationFrame(frame);
+}
 
-    $("deflectionResult").textContent=
-      delta===null ? "Unsupported load position" : delta.toFixed(4)+" mm";
+function rank() {
+  const sit = SITS[$("sit").value], keys = Object.keys(TYPES).filter(k => k !== "none");
+  const sc = keys.map(k => [k, score(k, sit)]).sort((a, b) => b[1] - a[1]), best = sc[0][0];
+  $("rank").innerHTML = sc.map(([k, s]) =>
+    '<div class="row' + (k === best ? " best" : "") + (k === v.key ? " pick" : "") + '"><span class="nm">' + TYPES[k].name +
+    (k === best ? " (best here)" : "") + '</span><div class="track"><div class="fill" style="width:' + s + '%"></div></div><span class="sc">' + s + '%</span></div>').join("");
+  const top = sit.w.map((w, i) => [w * TYPES[best].r[i], i]).filter(a => a[0] > 0).sort((a, b) => b[0] - a[0]).slice(0, 3).map(a => PN[a[1]]);
+  const mine = v.has ? " Your pick, " + TYPES[v.key].name.toLowerCase() + ", scores " + score(v.key, sit) + "%." : "";
+  $("why").textContent = "Best here: " + TYPES[best].name.toLowerCase() + ". It is strong on " + top.join(", ") + "." + mine;
+  return best;
+}
 
-    $("calcStatus").textContent="Calculated";
-    $("resultNotice").className="notice warning";
-    $("resultNotice").textContent=
-      "Geometric results use a thin-wall centreline model. The deflection estimate uses Euler–Bernoulli beam theory and Ixx for vertical bending. The selected cross-section is not yet used in a validated shear-centre solver. Treat these results as preliminary, not as validated engineering design values.";
+function update() {
+  v = inputs();
+  const T = v.T, sit = SITS[$("sit").value];
+  document.documentElement.dataset.mode = v.mode;
+  $("sitBlurb").textContent = sit.blurb;
+  $("dOut").textContent = $("d").value + " mm"; $("narOut").textContent = $("nar").value + "%";
+  $("pOut").textContent = $("p").value + " mmHg"; $("r0Out").textContent = $("r0").value + " mm";
+  $("t0Out").textContent = $("t0").value + " mm"; $("sOut").textContent = $("s").value + " kPa";
+  $("EaOut").textContent = $("Ea").value + " MPa"; $("EsOut").textContent = (+$("Es").value).toFixed(1) + " MPa·mm";
+  $("aMat").textContent = T.mat; $("aOpen").textContent = T.open; $("aUse").textContent = T.use; $("aNote").textContent = T.note;
+  const jump = v.has ? (v.Es / (v.Ea * v.t0)).toFixed(1) + "x" : "-";
 
-  } catch(error) {
-    $("calcStatus").textContent="Check model";
-    $("resultNotice").className="notice warning";
-    $("resultNotice").textContent=error.message;
+  if (v.mode === "an") {
+    const without = stress(v.P, v.r, v.r0, v.t0), keep = wallShare(v), sN = without * keep, ratio = sN / v.st;
+    zone = zoneOf(ratio);
+    $("rStress").textContent = Math.round(sN) + " kPa"; $("rWithout").textContent = Math.round(without) + " kPa";
+    $("rRatio").textContent = Math.round(ratio * 100) + "%";
+    $("rStent").textContent = v.has && T.covered ? Math.round((1 - keep) * 100) + "%" : "0%";
+    $("rSac").textContent = !v.has ? "Full" : v.key === "flow" ? "Mostly blocked" : T.covered ? "Sealed off" : "Still flowing";
+    $("rJump").textContent = jump;
+    $("verdict").textContent = { safe:"Low risk in this model.", warn:"Caution: the wall is carrying a large share of its strength.",
+      danger:"Danger zone: the stress is close to or above the wall strength." }[zone];
+  } else {
+    const before = 1 - v.nar / 100, now = before + (1 - before) * openFrac(v);
+    zone = now >= .85 ? "safe" : now >= .65 ? "warn" : "danger";
+    $("sOpen").textContent = Math.round(now * 100) + "%"; $("sBefore").textContent = Math.round(before * 100) + "%";
+    $("sJet").textContent = (1 / (now * now)).toFixed(1) + "x"; $("sJump").textContent = jump;
+    $("verdict").textContent = !v.has ? "Badly narrowed: blood has to squeeze through at high speed."
+      : now >= .85 ? "Well opened: the stent has pushed the plaque back and restored most of the flow."
+      : now >= .65 ? "Partly opened: this stent is not strong enough to fully push the plaque back." : "Still badly narrowed: this stent has too little radial strength here.";
+  }
+  document.documentElement.dataset.zone = zone;
+  rank();
+  if (reduce) frame(0);
+}
+
+document.querySelectorAll("input, select").forEach(el => el.addEventListener("input", update));
+$("type").addEventListener("change", () => {
+  const T = TYPES[$("type").value];
+  $("Es").disabled = $("type").value === "none";
+  if (T.Es) $("Es").value = T.Es;
+  update();
+});
+$("sit").addEventListener("change", () => {
+  const p = SITS[$("sit").value].pre;
+  for (const k in p) $(k).value = p[k];
+  update();
+});
+$("best").addEventListener("click", () => {
+  $("type").value = rank();
+  $("type").dispatchEvent(new Event("change", { bubbles:true }));
+});
+// ---------- inside the stent: stress map of the stent on its own ----------
+const MAT = { steel:{ name:"stainless steel", E:193000, lim:290, eps:0.0015 }, cocr:{ name:"cobalt-chromium", E:243000, lim:500, eps:0.0021 },
+              niti:{ name:"nitinol", E:40000, lim:450, eps:0.06 }, mg:{ name:"a magnesium alloy", E:45000, lim:200, eps:0.0045 } };
+const MATOF = { none:"steel", steelG:"steel", nitG:"niti", cocrG:"cocr", flow:"niti", bms:"cocr", des:"cocr", nitS:"niti", bio:"mg" };
+const COS = 0.819, SIN = 0.574;                      // strut angle at rest: 35 degrees from the circumferential direction
+const STOPS = [[0,[49,92,224]], [.25,[36,190,225]], [.5,[80,200,100]], [.75,[245,220,70]], [1,[230,50,40]], [1.5,[180,20,90]]];
+function mHeatArr(q) {
+  q = Math.max(0, Math.min(q, 1.5));
+  for (let i = 1; i < STOPS.length; i++) if (q <= STOPS[i][0]) {
+    const [a, A] = STOPS[i - 1], [b, B] = STOPS[i], t = (q - a) / (b - a);
+    return [0, 1, 2].map(k => Math.round(A[k] + (B[k] - A[k]) * t));
   }
 }
-
-function selectPreset(name) {
-  section=name;
-  sketch=[];
-  drawModel();
-  recalculate();
+const vmq = (o, v) => o.mode === "dp" ? Math.hypot(v, 0.12 * o.q) : v;
+const CRK = { steel:.25, cocr:.20, niti:.04, mg:.06 };                   // plastic strain at which a crown is likely to crack (teaching values)
+const peeqOn = () => document.querySelector("input[name=mcol]:checked").value === "pe";
+const peeqAt = (o, x) => o.strains.reduce((a, e) => a + Math.max(0, e * x - o.m.eps), 0) / CRK[o.mk];
+const fq = (o, q, x) => peeqOn() ? peeqAt(o, x) : vmq(o, q * x);
+const mHeat = q => "rgb(" + mHeatArr(q).join(",") + ")";
+function mCalc() {
+  const key = $("type").value, m = MAT[MATOF[key]], mode = document.querySelector("input[name=mload]:checked").value;
+  const w = +$("mw").value / 1000, t = +$("mt").value / 1000, L = +$("mL").value, R = +$("mR").value, N = +$("mN").value;
+  const o = { key, m, mode, w, t, L, R, N };
+  if (mode === "sq") {
+    const p = +$("mp").value / 1000, h = L * SIN + 0.3;
+    const F = p * 2 * Math.PI * R * h / (2 * N), M = F / 2 * L * COS;
+    o.sig = 6 * M / (t * w * w); o.q = o.sig / m.lim;
+  } else if (mode === "dp") {
+    const c = +$("mc").value / 100, step = (document.querySelector("input[name=mstep]:checked") || { value:"cr" }).value;
+    const self = m === MAT.niti, k = 2 * Math.PI * R / (2 * N);
+    const epsAt = D => 3 * w * k * Math.abs(1 - D) / (L * L);
+    const sigOf = e => self ? m.lim * (e < m.lim / m.E ? e / (m.lim / m.E) : 1 + 0.1 * Math.min(1, (e - m.lim / m.E) / 0.05))
+                            : (e <= m.eps ? m.E * e : m.lim * (1 + Math.min(0.25, (e / m.eps - 1) * 0.04)));
+    const De = self ? 0.95 : 1.10, ee = epsAt(De), rec = self ? 1 : Math.min(1, m.eps / ee);
+    o.self = self; o.step = step; o.rec = rec;
+    if (step === "cr") { o.f = c; o.eps = epsAt(c); o.sig = sigOf(o.eps); }
+    else if (step === "ex") { o.f = De; o.eps = ee; o.sig = sigOf(ee); }
+    else { o.f = self ? 1 : De - rec * (De - 1); o.eps = ee * (1 - rec); o.sig = self ? 0.02 * m.lim : 0.4 * (1 - rec) * m.lim; }
+    o.q = o.sig / m.lim; o.c = c; o.strains = step === "cr" ? [epsAt(c)] : [epsAt(c), ee];
+  } else {
+    const c = +$("mc").value / 100, d = 2 * Math.PI * R * (1 - c) / (2 * N);
+    o.eps = 3 * w * d / (L * L); o.q = o.eps / m.eps; o.c = c;
+  }
+  o.mk = MATOF[key];
+  if (!o.strains) o.strains = mode === "sq" ? [o.q * m.lim / m.E] : [o.eps];
+  return o;
 }
+const sg = $("sc").getContext("2d"), SW = 960, SH = 440;
+function mDraw(time) {
+  const o = mCalc(), ph = $("manim").checked && !reduce && o.mode !== "dp" ? 0.5 + 0.5 * Math.sin(time / 520) : 1;
+  const sq = o.mode === "sq", q = o.q * ph, N = o.N;
+  const f = sq ? 1 - 0.1 * Math.min(q, 2) : o.mode === "dp" ? o.f : 1 - (1 - o.c) * ph;       // circumference shrink factor
+  sg.clearRect(0, 0, SW, SH);
 
-document.querySelectorAll("[data-preset]").forEach(btn => {
-  btn.addEventListener("click",()=>selectPreset(btn.dataset.preset));
-});
+  const cx = 200, cy2 = 220, R0 = 135, Rd = R0 * f;                    // end view: a ring of 2N crowns
+  if (!sq) { sg.setLineDash([6, 6]); sg.strokeStyle = "rgba(143,176,192,.5)"; sg.lineWidth = 1.5; sg.beginPath(); sg.arc(cx, cy2, R0, 0, 6.2832); sg.stroke(); sg.setLineDash([]); }
+  sg.lineWidth = 3 + o.w * 14; sg.lineCap = "butt";
+  for (let i = 0; i < 720; i++) {
+    const u = (i / 720 * 2 * N) % 1, a0 = i / 720 * 6.2832, a1 = (i + 1.4) / 720 * 6.2832;
+    sg.strokeStyle = mHeat(fq(o, q, Math.abs(1 - 2 * u)));
+    sg.beginPath(); sg.arc(cx, cy2, Rd, a0, a1); sg.stroke();
+  }
+  if (sq) {                                                            // pressure arrows
+    sg.strokeStyle = "rgba(230,241,246,.75)"; sg.fillStyle = "rgba(230,241,246,.75)"; sg.lineWidth = 2;
+    for (let k = 0; k < 2 * N; k++) {
+      const a = (k + .5) / (2 * N) * 6.2832, r1 = R0 + 50, r2 = Rd + 16 + 10 * (1 - ph);
+      sg.beginPath(); sg.moveTo(cx + r1 * Math.cos(a), cy2 + r1 * Math.sin(a)); sg.lineTo(cx + r2 * Math.cos(a), cy2 + r2 * Math.sin(a)); sg.stroke();
+      sg.beginPath(); sg.arc(cx + r2 * Math.cos(a), cy2 + r2 * Math.sin(a), 3.5, 0, 6.2832); sg.fill();
+    }
+  }
+  sg.fillStyle = "rgba(143,176,192,.9)"; sg.font = "600 13px system-ui, sans-serif"; sg.textAlign = "center";
+  sg.fillText("end view", cx, 30); sg.fillText("unrolled and laid flat", 665, 30);
 
-document.querySelectorAll("[data-tool]").forEach(btn => {
-  btn.addEventListener("click",()=>{
-    tool=btn.dataset.tool;
-    document.querySelectorAll("[data-tool]").forEach(b=>
-      b.classList.toggle("active",b===btn)
-    );
-    $("drawStatus").textContent=
-      tool==="select"?"Select mode": "Drawing mode: "+tool;
+  const x0 = 400, widthPx = 530, dx0 = widthPx / (2 * N), Lpx = dx0 / COS, dx = dx0 * f;   // unrolled mesh
+  const A = Math.sqrt(Math.max(Lpx * Lpx - dx * dx, 0)), link = 10, gap = A + link, rings = 8;
+  const top = SH / 2 - ((rings - 1) * gap + A) / 2, X0 = x0 + (widthPx - 2 * N * dx) / 2;
+  const P = (j, i) => [X0 + i * dx, top + j * gap + ((i + j) % 2 ? A : 0)];
+  sg.lineWidth = 2 + o.w * 30; sg.lineCap = "round";
+  for (let j = 0; j < rings; j++) for (let i = 0; i < 2 * N; i++) {
+    const [xa, ya] = P(j, i), [xb, yb] = P(j, i + 1);
+    for (let s = 0; s < 8; s++) {                                      // moment is largest at the crowns, zero mid-strut
+      const t0 = s / 8, t1 = (s + 1) / 8;
+      sg.strokeStyle = mHeat(fq(o, q, Math.abs(1 - (t0 + t1))));
+      sg.beginPath(); sg.moveTo(xa + (xb - xa) * t0, ya + (yb - ya) * t0); sg.lineTo(xa + (xb - xa) * t1, ya + (yb - ya) * t1); sg.stroke();
+    }
+    if (j < rings - 1 && (i + j) % 2 === 1 && i % 4 < 2) {             // links between rings
+      const [xl, yl] = P(j + 1, i); sg.strokeStyle = mHeat(peeqOn() ? 0 : q * 0.12);
+      sg.beginPath(); sg.moveTo(xa, ya); sg.lineTo(xl, yl); sg.stroke();
+    }
+  }
+  mReadouts(o);
+}
+function peeqReadout(o) {
+  const on = peeqOn(), pk = o.strains.reduce((a, e) => a + Math.max(0, e - o.m.eps), 0), r = pk / CRK[o.mk];
+  $("lgMid").textContent = on ? "crack threshold (1.0)" : "material limit (1.0)";
+  $("lgCap").textContent = on ? "Colors show cumulative plastic strain (PEEQ) as a share of the crack threshold." : "Colors show stress as a share of the material limit.";
+  $("peeqLine").innerHTML = "Peak PEEQ at the crowns: <b>" + (pk * 100).toFixed(2) + "%</b>, which is <b>" + Math.round(r * 100) + "%</b> of the " + o.m.name + " crack threshold (" + (CRK[o.mk] * 100) + "%). " +
+    (r >= 1 ? "The hotspots are beyond the threshold: a crack is likely there." : r >= .6 ? "The hotspots are close to the threshold: the design is near cracking." : r > 0 ? "There is plastic strain, but it is well inside the safe range." :
+     "No plastic strain: the whole stent stays elastic." + (o.mode === "sq" ? " Try the Crimp or Deploy load case to see plastic strain." : ""));
+}
+function dpReadouts(o, set) {
+  const pct = Math.round(o.q * 100) + "%", df = Math.round((o.f - 1) * 100);
+  set("A", Math.round(o.sig) + " MPa", "peak von Mises stress"); set("B", pct, "of the material limit");
+  set("C", (df > 0 ? "+" : "") + df + "%", "diameter vs the free shape");
+  if (o.step === "rb") set("D", Math.round(o.rec * 100) + "%", "elastic recoil"); else set("D", (o.eps * 100).toFixed(1) + "%", "peak bending strain");
+  const V = {
+    cr: o.self ? "Step 1, crimped: nitinol sits on its stress plateau. The crowns are loaded but fully recoverable."
+       : o.q >= 1 ? "Step 1, crimped: the crowns are at the limit and yield, so the bend becomes permanent." : "Step 1, crimped: the crowns stay below the limit.",
+    ex: o.self ? "Step 2, expanded: released into the vessel, the stress drops and the stent pushes gently outward."
+       : o.q >= 1 ? "Step 2, expanded: the balloon bends the crowns past yield. This permanent deformation is what holds the stent open." : "Step 2, expanded: the crowns stay elastic, so the stent will spring back after the balloon.",
+    rb: o.self ? "Step 3, rebound: nitinol returns fully to its free shape with almost no stress left."
+       : "Step 3, rebound: the balloon is removed and the stent recoils " + Math.round(o.rec * 100) + "% of its overexpansion. Residual stress stays at the crowns."
+  };
+  $("mverdict").textContent = V[o.step];
+}
+function mReadouts(o) {
+  peeqReadout(o);
+  const set = (k, a, b) => { $("mr" + k).textContent = a; $("ml" + k).textContent = b; };
+  $("mpOut").textContent = $("mp").value + " kPa"; $("mcOut").textContent = $("mc").value + "% of full";
+  $("mwOut").textContent = $("mw").value + " µm"; $("mtOut").textContent = $("mt").value + " µm";
+  $("mLOut").textContent = (+$("mL").value).toFixed(1) + " mm"; $("mROut").textContent = (+$("mR").value).toFixed(2) + " mm"; $("mNOut").textContent = $("mN").value;
+  $("mLine").textContent = o.key === "none" ? "No stent is chosen above, so this shows stainless steel." : "Showing: " + TYPES[o.key].name.toLowerCase() + ", made of " + o.m.name + ".";
+  const pct = Math.round(o.q * 100) + "%";
+  if (o.mode === "dp") { dpReadouts(o, set); }
+  else if (o.mode === "sq") {
+    const pc = o.q > 0 ? (+$("mp").value) / o.q : Infinity;
+    set("A", Math.round(o.sig) + " MPa", "peak stress at the crowns"); set("B", pct, "of the material limit");
+    set("C", isFinite(pc) ? Math.round(pc) + " kPa" : "-", "outside pressure that reaches the limit");
+    set("D", isFinite(pc) ? Math.round(pc * 7.5) + " mmHg" : "-", "the same, in mmHg");
+    $("mverdict").textContent = o.q >= 1 ? "The crowns have reached the limit: this stent would collapse or stay squashed under this pressure."
+      : o.q >= .6 ? "Close to the limit: it works, but with little safety margin." : "Safe: the metal is working well below its limit.";
+  } else {
+    const rec = Math.min(1, o.m.eps / o.eps);
+    set("A", (o.eps * 100).toFixed(1) + "%", "peak bending strain at the crowns"); set("B", pct, "of the recoverable strain");
+    set("C", Math.round(rec * 100) + "%", "springs back when released"); set("D", Math.round((1 - rec) * 100) + "%", "permanent set (stays deformed)");
+    $("mverdict").textContent = o.q <= 1 ? "Fully elastic: the stent springs back to its original shape when released, as nitinol does."
+      : "Beyond the elastic limit: the metal deforms permanently. This is how balloon-expandable stents are meant to work, but a self-expanding stent cannot.";
+  }
+}
+// ---------- 3D view (Three.js): every strut is a small cylinder colored by its stress ----------
+const has3D = typeof THREE !== "undefined";
+if (!has3D) { $("mview3d").disabled = true; $("m3hint").textContent = "The 3D view needs an internet connection to load the Three.js library."; }
+let T3 = null, v3a, v3b, v3c, v3d, q3, m3, s3, c3, Y3;
+function init3D() {
+  const canvas = $("sc3"), renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); renderer.setSize(960, 440, false); renderer.setClearColor(0x050d13, 1);
+  const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(40, 960 / 440, 0.1, 100); camera.position.set(0, 0, 8.5);
+  scene.add(new THREE.AmbientLight(0xffffff, .7));
+  const d1 = new THREE.DirectionalLight(0xffffff, .9); d1.position.set(3, 4, 5); scene.add(d1);
+  const d2 = new THREE.DirectionalLight(0x6fb8ff, .45); d2.position.set(-4, -2, -3); scene.add(d2);
+  const pivot = new THREE.Group(), holder = new THREE.Group(); holder.rotation.x = -Math.PI / 2; pivot.add(holder); scene.add(pivot);
+  const mesh = new THREE.InstancedMesh(new THREE.CylinderGeometry(1, 1, 1, 6, 1), new THREE.MeshStandardMaterial({ roughness:.5, metalness:.15 }), 3000);
+  mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); mesh.setColorAt(0, new THREE.Color()); holder.add(mesh);
+  v3a = new THREE.Vector3(); v3b = new THREE.Vector3(); v3c = new THREE.Vector3(); v3d = new THREE.Vector3();
+  q3 = new THREE.Quaternion(); m3 = new THREE.Matrix4(); s3 = new THREE.Vector3(); c3 = new THREE.Color(); Y3 = new THREE.Vector3(0, 1, 0);
+  T3 = { renderer, scene, camera, pivot, mesh, spin:0.6, tilt:0.5, drag:false, lx:0, ly:0 };
+  canvas.addEventListener("pointerdown", e => { T3.drag = true; T3.lx = e.clientX; T3.ly = e.clientY; canvas.setPointerCapture(e.pointerId); canvas.style.cursor = "grabbing"; });
+  canvas.addEventListener("pointermove", e => {
+    if (!T3.drag) return;
+    T3.spin += (e.clientX - T3.lx) * 0.01; T3.tilt = Math.max(-1.4, Math.min(1.4, T3.tilt + (e.clientY - T3.ly) * 0.01));
+    T3.lx = e.clientX; T3.ly = e.clientY; if (!mRun) mFrame(0);
   });
-});
-
-function pointFromEvent(event) {
-  const svg=$("canvas");
-  const p=svg.createSVGPoint();
-  p.x=event.clientX;
-  p.y=event.clientY;
-  return p.matrixTransform(svg.getScreenCTM().inverse());
+  const up = () => { T3.drag = false; canvas.style.cursor = "grab"; };
+  canvas.addEventListener("pointerup", up); canvas.addEventListener("pointercancel", up);
+  canvas.addEventListener("wheel", e => { e.preventDefault(); camera.position.z = Math.max(4, Math.min(14, camera.position.z + e.deltaY * 0.005)); if (!mRun) mFrame(0); }, { passive:false });
 }
-
-$("canvas").addEventListener("pointerdown",event=>{
-  if(tool==="select") return;
-
-  const p=pointFromEvent(event);
-  activeShape={
-    type:tool,x1:p.x,y1:p.y,x2:p.x,y2:p.y
-  };
-  sketch.push(activeShape);
-  $("canvas").setPointerCapture(event.pointerId);
-  drawModel();
-});
-
-$("canvas").addEventListener("pointermove",event=>{
-  if(!activeShape) return;
-  const p=pointFromEvent(event);
-  activeShape.x2=p.x;
-  activeShape.y2=p.y;
-  drawModel();
-});
-
-$("canvas").addEventListener("pointerup",()=>{activeShape=null;});
-
-$("undoBtn").addEventListener("click",()=>{
-  sketch.pop();
-  drawModel();
-  recalculate();
-});
-
-$("clearBtn").addEventListener("click",()=>{
-  sketch=[];
-  if(section==="Custom") section="C";
-  drawModel();
-  recalculate();
-});
-
-$("applyBtn").addEventListener("click",()=>{
-  drawModel();
-  recalculate();
-});
-
-$("calculateBtn").addEventListener("click",recalculate);
-
-$("material").addEventListener("change",()=>{
-  const m=$("material").value;
-  if(m==="aluminium") {
-    $("young").value=69;
-    $("shear").value=26;
-  } else if(m==="steel") {
-    $("young").value=200;
-    $("shear").value=77;
+function place(k, a, b, rad, q) {
+  v3d.subVectors(b, a); const len = v3d.length(); v3c.addVectors(a, b).multiplyScalar(.5);
+  q3.setFromUnitVectors(Y3, v3d.normalize()); s3.set(rad, len, rad); m3.compose(v3c, q3, s3);
+  T3.mesh.setMatrixAt(k, m3); const c = mHeatArr(q); c3.setRGB(c[0] / 255, c[1] / 255, c[2] / 255); T3.mesh.setColorAt(k, c3);
+}
+function m3Draw(time) {
+  if (!T3) init3D();
+  const o = mCalc(), animating = $("manim").checked && !reduce, ph = animating && o.mode !== "dp" ? 0.5 + 0.5 * Math.sin(time / 520) : 1;
+  const sq = o.mode === "sq", q = o.q * ph, N = o.N, f = sq ? 1 - 0.1 * Math.min(q, 2) : o.mode === "dp" ? o.f : 1 - (1 - o.c) * ph;
+  const a0 = 2 * Math.PI / (2 * N), chord0 = 2 * Math.sin(a0 / 2), Lc = chord0 / COS, chord = chord0 * f;
+  const A = Math.sqrt(Math.max(Lc * Lc - chord * chord, 0)), gap = A + 0.18, rings = 8, top = -((rings - 1) * gap + A) / 2;
+  const pt = (j, i, out) => out.set(f * Math.cos(i * a0), f * Math.sin(i * a0), top + j * gap + (((i + j) % 2) ? A : 0));
+  const rad = 0.014 + o.w * 0.2;                                       // strut thickness drawn from the width slider
+  let k = 0;
+  for (let j = 0; j < rings; j++) for (let i = 0; i < 2 * N; i++) {
+    pt(j, i, v3a); pt(j, i + 1, v3b);
+    for (let s = 0; s < 10; s++) {                                     // stress fades from the crowns to zero mid-strut
+      const p0 = new THREE.Vector3().copy(v3a).lerp(v3b, s / 10), p1 = new THREE.Vector3().copy(v3a).lerp(v3b, (s + 1) / 10);
+      place(k++, p0, p1, rad, fq(o, q, Math.abs(1 - (s + .5) / 5)));
+    }
+    if (j < rings - 1 && (i + j) % 2 === 1 && i % 4 < 2) { pt(j, i, v3a); pt(j + 1, i, v3b); place(k++, v3a, v3b, rad * .8, peeqOn() ? 0 : q * 0.12); }
   }
-  recalculate();
-});
+  T3.mesh.count = k; T3.mesh.instanceMatrix.needsUpdate = true; T3.mesh.instanceColor.needsUpdate = true;
+  T3.pivot.rotation.y = T3.spin + (animating && !T3.drag ? time * 0.0004 : 0); T3.pivot.rotation.x = T3.tilt;
+  T3.renderer.render(T3.scene, T3.camera);
+  mReadouts(o);
+}
+function mFrame(t) { if ($("mview3d").checked && has3D) m3Draw(t); else mDraw(t); }
 
-[
-  "height","width","thickness","length","young","shear",
-  "load","loadUnit","loadType","loadPosition","direction","wallType"
-].forEach(id=>{
-  $(id).addEventListener("change",recalculate);
-});
+let mRun = false;
+function mLoop(t) { mFrame(t); if ($("manim").checked && !reduce) requestAnimationFrame(mLoop); else mRun = false; }
+function mRefresh() {
+  document.documentElement.dataset.load = document.querySelector("input[name=mload]:checked").value;
+  document.documentElement.dataset.view = $("mview3d").checked && has3D ? "3d" : "2d";
+  if ($("manim").checked && !reduce) { if (!mRun) { mRun = true; requestAnimationFrame(mLoop); } } else mFrame(0);
+}
+document.querySelectorAll("#msec input").forEach(el => el.addEventListener("input", mRefresh));
+$("type").addEventListener("change", mRefresh);
+mRefresh();
 
-$("resetBtn").addEventListener("click",()=>{
-  $("height").value=60;
-  $("width").value=100;
-  $("thickness").value=2;
-  $("length").value=500;
-  $("load").value=100;
-  $("loadUnit").value="N";
-  $("loadPosition").value=500;
-  $("loadType").value="point";
-  $("material").value="aluminium";
-  $("young").value=69;
-  $("shear").value=26;
-  $("direction").value="vertical";
-  $("wallType").value="thin";
-  sketch=[];
-  selectPreset("C");
-});
-
-$("homeBtn").addEventListener("click",()=>{
-  $("editor").scrollIntoView({behavior:"smooth"});
-});
-
-$("startBtn").addEventListener("click",()=>{
-  $("editor").scrollIntoView({behavior:"smooth"});
-});
-
-function modelData() {
-  return {
-    project:"TENSOR",
-    section,
-    dimensions_mm:dims(),
-    material:{
-      name:$("material").value,
-      youngs_modulus_GPa:Number($("young").value),
-      shear_modulus_GPa:Number($("shear").value)
-    },
-    loading:{
-      type:$("loadType").value,
-      magnitude:Number($("load").value),
-      unit:$("loadUnit").value,
-      application_position_mm:Number($("loadPosition").value),
-      direction:$("direction").value
-    },
-    wall_model:$("wallType").value,
-    sketch,
-    note:"Preliminary model. No validated shear-centre solver is included."
-  };
+// ---------- graph analysis ----------
+const gx = $("gc").getContext("2d"), GW = 960, GH = 460, ML = 80, MR = 26, MT = 26, MB = 60;
+const GCOL = { none:"#ff5a5f", steelG:"#cfd8dc", nitG:"#9fd8da", cocrG:"#c8b6ff", flow:"#f2b64d" };
+const MCOL = { steel:"#cfd8dc", cocr:"#c8b6ff", niti:"#9fd8da" };
+function gTicks(max) { const st = [10,20,50,100,200,250,500,1000,2000,5000].find(x => max / x <= 6) || 5000, a = []; for (let t = 0; t <= max + 1e-9; t += st) a.push(t); return a; }
+function gSetup(o) {
+  const pw = GW - ML - MR, ph = GH - MT - MB, fx = o.xlog ? Math.log10 : (a => a), fy = o.ylog ? Math.log10 : (a => a);
+  const X = x => ML + (fx(x) - fx(o.x0)) / (fx(o.x1) - fx(o.x0)) * pw, Y = y => MT + ph - (fy(y) - fy(o.y0)) / (fy(o.y1) - fy(o.y0)) * ph;
+  gx.clearRect(0, 0, GW, GH); gx.font = "13px system-ui, sans-serif"; gx.lineWidth = 1; gx.strokeStyle = "rgba(255,255,255,.1)"; gx.fillStyle = "#c79a98"; gx.textAlign = "center";
+  for (const t of o.xt) { gx.beginPath(); gx.moveTo(X(t), MT); gx.lineTo(X(t), MT + ph); gx.stroke(); gx.fillText(o.xtf ? o.xtf(t) : t, X(t), MT + ph + 20); }
+  gx.textAlign = "right";
+  for (const t of o.yt) { gx.beginPath(); gx.moveTo(ML, Y(t)); gx.lineTo(ML + pw, Y(t)); gx.stroke(); gx.fillText(t, ML - 8, Y(t) + 4); }
+  gx.textAlign = "center"; gx.fillText(o.xl, ML + pw / 2, GH - 14);
+  gx.save(); gx.translate(18, MT + ph / 2); gx.rotate(-Math.PI / 2); gx.fillText(o.yl, 0, 0); gx.restore();
+  gx.strokeStyle = "rgba(255,255,255,.35)"; gx.strokeRect(ML, MT, pw, ph);
+  return { X, Y, pw, ph };
+}
+function gLine(pts, X, Y, col, w, dash) {
+  gx.strokeStyle = col; gx.lineWidth = w; gx.setLineDash(dash || []); gx.beginPath();
+  pts.forEach((p, i) => i ? gx.lineTo(X(p[0]), Y(p[1])) : gx.moveTo(X(p[0]), Y(p[1]))); gx.stroke(); gx.setLineDash([]);
+}
+function gText(t, x, y, col, al) { gx.fillStyle = col; gx.textAlign = al || "left"; gx.fillText(t, x, y); }
+function gDot(x, y, col) { gx.fillStyle = col; gx.beginPath(); gx.arc(x, y, 7, 0, 6.2832); gx.fill(); gx.strokeStyle = "#fff"; gx.lineWidth = 2; gx.stroke(); }
+function gClip(pw, ph) { gx.save(); gx.beginPath(); gx.rect(ML, MT, pw, ph); gx.clip(); }
+function gLegend(items) {
+  items.forEach((it, i) => { const y = MT + 20 + i * 20; gLine([[0, 0], [1, 0]], () => ML + 14 + (arguments[0], 0), () => y, it[1], 3, it[2]); });
+}
+function gKey(items, X0, Y0) {                                   // legend: a short line sample and a name
+  items.forEach((it, i) => {
+    const y = Y0 + i * 20; gx.strokeStyle = it[1]; gx.lineWidth = 3; gx.setLineDash(it[2] || []);
+    gx.beginPath(); gx.moveTo(X0, y); gx.lineTo(X0 + 30, y); gx.stroke(); gx.setLineDash([]); gText(it[0], X0 + 38, y + 4, "#f8e6e2");
+  });
 }
 
-$("exportBtn").addEventListener("click",downloadModel);
-$("downloadBtn").addEventListener("click",downloadModel);
-
-function downloadModel() {
-  const blob=new Blob(
-    [JSON.stringify(modelData(),null,2)],
-    {type:"application/json"}
-  );
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");
-  a.href=url;
-  a.download="tensor-model.json";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
+function g1() {
+  const iv = inputs(), covered = ["steelG", "nitG", "cocrG", "flow"];
+  const ymax = Math.ceil(Math.max(iv.st * 1.5, Math.min(stress(iv.P, 40, iv.r0, iv.t0), iv.st * 3)) / 100) * 100;
+  const { X, Y, pw, ph } = gSetup({ x0:20, x1:80, y0:0, y1:ymax, xt:[20,30,40,50,60,70,80], yt:gTicks(ymax), xl:"Bulge diameter (mm)", yl:"Wall stress (kPa)" });
+  const rOf = d => Math.max(d / 2, iv.r0);
+  const keepOf = (key, r) => { const Eat = iv.Ea * thick(r, iv.r0, iv.t0), Es = key === iv.key ? iv.Es : TYPES[key].Es; return Eat / (Eat + Es); };
+  const sOf = (key, d) => { const r = rOf(d), s = stress(iv.P, r, iv.r0, iv.t0); return key === "none" ? s : s * keepOf(key, r); };
+  gClip(pw, ph);
+  gLine([[20, iv.st], [80, iv.st]], X, Y, "rgba(255,255,255,.85)", 2, [8, 5]);
+  ["none", ...covered].forEach(k => { const pts = []; for (let d = 20; d <= 80; d++) pts.push([d, sOf(k, d)]); gLine(pts, X, Y, GCOL[k], k === "none" ? 3.5 : 2.5); });
+  gx.restore();
+  gText("wall strength", X(80) - 6, Y(iv.st) - 8, "rgba(255,255,255,.85)", "right");
+  gKey([["No stent, or an open-mesh stent", GCOL.none], ["Stent graft, stainless steel", GCOL.steelG], ["Stent graft, nitinol", GCOL.nitG], ["Stent graft, cobalt-chromium", GCOL.cocrG], ["Flow diverter", GCOL.flow]], ML + 16, MT + 22);
+  const sel = iv.has && covered.includes(iv.key) ? iv.key : "none";
+  if (iv.mode === "an") { const d = +$("d").value, s = sOf(sel, d); if (s <= ymax) { gDot(X(d), Y(s), GCOL[sel]); gText("you are here", X(d) + 12, Y(s) - 10, "#fff"); } }
+  const cross = key => { for (let d = 20; d <= 80; d += 0.5) if (sOf(key, d) >= iv.st) return d; return null; };
+  const c0 = cross("none"), cs = sel !== "none" ? cross(sel) : null;
+  $("gNums").textContent = "Without a stent the wall reaches its strength " + (c0 ? "at about " + Math.round(c0) + " mm." : "nowhere between 20 and 80 mm.") +
+    (sel !== "none" ? " With the " + TYPES[sel].name.toLowerCase() + " it " + (cs ? "reaches it at about " + Math.round(cs) + " mm." : "stays below the strength line all the way to 80 mm.") : "") +
+    (iv.mode === "an" ? "" : " Pick an aneurysm situation above to see the live marker.");
+  $("gTrend").textContent = "Stress rises faster and faster as the bulge grows, and crosses the wall strength line. A covered stent bends the curve down, and a stiffer one bends it more. An open-mesh stent leaves the red curve unchanged.";
+  $("gTheory").textContent = "Hoop stress σ = P·r/t with t = r₀t₀/r as the wall stretches, so σ = P·r² / (r₀t₀). With a covered stent the wall keeps the fraction Eₐt / (Eₐt + Eₛtₛ) of the load.";
+  $("gMean").textContent = "The curve explains why aneurysms accelerate and why doctors watch their size. A stiffer stent relieves more stress, but it also increases the stiffness jump at its ends, which is the trade-off in the ranking above.";
 }
 
-drawModel();
-recalculate();
+function g2() {
+  const iv = inputs(), o = mCalc(), key = MATOF[$("type").value], m = MAT[key];
+  const sig = { steel: e => e <= .0015 ? 193000 * e : 290 + 4000 * (e - .0015), cocr: e => e <= .0021 ? 243000 * e : 500 + 5000 * (e - .0021),
+    niti: e => e <= .01 ? 40000 * e : e <= .06 ? 400 + (e - .01) * 1600 : 480 + (e - .06) * 30000 };
+  const { X, Y, pw, ph } = gSetup({ x0:0, x1:8, y0:0, y1:1100, xt:[0,1,2,3,4,5,6,7,8], yt:[0,200,400,600,800,1000], xl:"Strain (%)", yl:"Stress (MPa)" });
+  gClip(pw, ph);
+  for (const k of ["steel", "cocr", "niti"]) { const pts = []; for (let e = 0; e <= .08001; e += .0002) pts.push([e * 100, sig[k](e)]); gLine(pts, X, Y, MCOL[k], k === key ? 4 : 2.5); }
+  gLine([[6, 480], [5.5, 220], [2, 190], [.75, 150], [0, 0]], X, Y, MCOL.niti, 2, [6, 5]);          // nitinol unloading path
+  gLine([[0, 0], [8, iv.Ea * .08]], X, Y, GCOL.none, 4);                                          // artery wall: almost flat
+  let e = o.mode === "cr" ? o.eps : o.sig / m.E; e = Math.min(e, .08);
+  const sv = sig[key](e);
+  if (key !== "niti" && e > m.eps) gLine([[e * 100, sv], [(e - sv / m.E) * 100, 0]], X, Y, MCOL[key], 2, [6, 5]);
+  gx.restore();
+  gKey([["Stainless steel", MCOL.steel], ["Cobalt-chromium", MCOL.cocr], ["Nitinol, loading", MCOL.niti], ["Nitinol, unloading", MCOL.niti, [6, 5]], ["Artery wall", GCOL.none]], ML + 16, MT + 22);
+  gDot(X(e * 100), Y(sv), MCOL[key]); gText("your stent", X(e * 100) + 12, Y(sv) - 10, "#fff");
+  gText("artery wall: under 1 MPa", X(8) - 8, Y(0) - 12, GCOL.none, "right");
+  const perm = key !== "niti" && e > m.eps ? ((e - sv / m.E) * 100).toFixed(1) + "% permanent set after unloading." : "It springs back fully.";
+  $("gNums").textContent = "Selected stent material: " + m.name + ", stiffness about " + Math.round(m.E / 1000) + " GPa and limit " + m.lim + " MPa. At the current load the strain is " + (e * 100).toFixed(2) + "%. " + perm +
+    " It is about " + Math.round(m.E / iv.Ea).toLocaleString() + " times stiffer than the artery wall.";
+  $("gTrend").textContent = "Steel and cobalt-chromium climb steeply, bend at the yield point and keep a permanent set when unloaded. Nitinol has a flat plateau and returns along a lower path, so it recovers its shape. The artery wall barely registers on this scale.";
+  $("gTheory").textContent = "Hooke's law σ = Eε up to the yield point, then plastic hardening. Unloading after yield follows a line of slope E, which leaves the permanent set. The nitinol plateau comes from a reversible phase change, called superelasticity.";
+  $("gMean").textContent = "A balloon-expandable stent needs plastic deformation to stay open, while a self-expanding stent needs a large elastic range. The huge stiffness gap with the artery is why stress concentrates where a stent ends.";
+}
+
+function g3() {
+  const p = Math.max(+$("mp").value, 1) / 1000, t = +$("mt").value / 1000, L = +$("mL").value, R = +$("mR").value, N = +$("mN").value, wNow = +$("mw").value;
+  const F = p * 2 * Math.PI * R * (L * SIN + 0.3) / (2 * N), M = F / 2 * L * COS, sg = wmm => 6 * M / (t * wmm * wmm), LIM = { steel:290, cocr:500, niti:450 };
+  const { X, Y, pw, ph } = gSetup({ x0:30, x1:300, y0:10, y1:3000, xlog:true, ylog:true, xt:[30,50,100,200,300], yt:[10,30,100,300,1000,3000], xl:"Strut width (µm), log scale", yl:"Peak crown stress (MPa), log scale" });
+  gClip(pw, ph);
+  const cur = [], dbl = []; for (let i = 0; i <= 60; i++) { const w = 30 * Math.pow(10, i / 60); cur.push([w, sg(w / 1000)]); dbl.push([w, 2 * sg(w / 1000)]); }
+  for (const k of ["steel", "cocr", "niti"]) gLine([[30, LIM[k]], [300, LIM[k]]], X, Y, MCOL[k], 2, [8, 5]);
+  gLine(dbl, X, Y, "rgba(255,90,95,.55)", 2.5, [6, 5]); gLine(cur, X, Y, GCOL.none, 3.5);
+  gx.restore();
+  gText("steel limit", X(300) - 6, Y(290) + 16, MCOL.steel, "right"); gText("nitinol plateau", X(300) - 6, Y(450) - 6, MCOL.niti, "right"); gText("cobalt-chromium limit", X(300) - 6, Y(500) - 22, MCOL.cocr, "right");
+  gKey([["Peak stress, current pressure", GCOL.none], ["Peak stress, double the pressure", "rgba(255,90,95,.55)", [6, 5]]], ML + 16, MT + 22);
+  const sn = sg(wNow / 1000); if (sn >= 10 && sn <= 3000) { gDot(X(wNow), Y(sn), "#fff"); gText("your stent", X(wNow) + 12, Y(sn) - 10, "#fff"); }
+  const wmin = k => Math.sqrt(6 * M / (t * LIM[k])) * 1000;
+  $("gNums").textContent = "At " + Math.round(p * 1000) + " kPa outside pressure, the smallest safe strut width is about " + Math.round(wmin("steel")) + " µm for steel, " + Math.round(wmin("cocr")) +
+    " µm for cobalt-chromium and " + Math.round(wmin("niti")) + " µm for nitinol. Your width of " + wNow + " µm gives " + Math.round(sn) + " MPa at the crowns.";
+  $("gTrend").textContent = "On log-log axes the stress is a straight line with slope −2: doubling the strut width cuts the crown stress to a quarter. Doubling the pressure moves the whole line up. Where the line crosses a material's limit is the thinnest strut that survives.";
+  $("gTheory").textContent = "Peak bending stress σ = 6M / (t·w²), with M = (F/2)·L·cos θ and F = p·2πR·h / 2N. Because w is squared, width is by far the most powerful design variable.";
+  $("gMean").textContent = "Thin struts make a stent flexible and leave more room for blood flow, but they set a floor on strength. This is the designer's trade-off between a slim profile and radial strength.";
+}
+
+function g4() {
+  const key = MATOF[$("type").value], m = MAT[key], self = m === MAT.niti;
+  const FAT = { steel:{ Su:600, Se:240 }, cocr:{ Su:1000, Se:400 }, niti:{ Su:1300, Se:150 }, mg:{ Su:250, Se:90 } };
+  const Su = FAT[key].Su, Se = FAT[key].Se, Sy = m.lim, crit = document.querySelector("input[name=fcrit]:checked").value;
+  const w = +$("mw").value / 1000, t = +$("mt").value / 1000, L = +$("mL").value, R = +$("mR").value, N = +$("mN").value;
+  const k = 2 * Math.PI * R / (2 * N), epsAt = D => 3 * w * k * Math.abs(1 - D) / (L * L);
+  const perKPa = 6 * (0.001 * 2 * Math.PI * R * (L * SIN + 0.3) / (2 * N) / 2 * L * COS) / (t * w * w);    // crown stress per kPa
+  const sys = +$("p").value * K, dia = Math.max(0, sys - (+$("fPulse").value) * K), mot = +$("fMotion").value / 100;
+  $("fPulseOut").textContent = $("fPulse").value + " mmHg"; $("fMotionOut").textContent = (+$("fMotion").value).toFixed(1) + "%";
+  let res = 0;
+  if ($("fRes").checked) { if (self) res = Math.min(m.E * epsAt(0.95), m.lim); else { const ee = epsAt(1.10), rec = Math.min(1, m.eps / ee); res = 0.4 * (1 - rec) * m.lim; } }
+  const sa = perKPa * (sys - dia) / 2 + m.E * 3 * w * k * mot / (L * L), sm = res + perKPa * (sys + dia) / 2;
+  const A = Math.max(sa / Se, 1e-9), B = sm / Su, nG = 1 / (A + B), nR = B > 1e-9 ? (-A + Math.sqrt(A * A + 4 * B * B)) / (2 * B * B) : 1 / A;
+  const nn = crit === "gd" ? nG : nR, fmt = n => n > 99 ? ">99" : n.toFixed(1);
+  const rnd = v => Math.ceil(v / 50) * 50, x1 = rnd(Math.max(Su * 1.05, sm * 1.15)), y1 = rnd(Math.max(Se * 1.3, sa * 1.2));
+  const { X, Y, pw, ph } = gSetup({ x0:0, x1, y0:0, y1, xt:gTicks(x1), yt:gTicks(y1), xl:"Mean stress σm (MPa)", yl:"Alternating stress σa (MPa)" });
+  const gerber = s => Se * (1 - (s / Su) * (s / Su)), good = s => Se * (1 - s / Su), fail = crit === "gd" ? good : gerber, COLG = "#f2b64d", COLB = "#9fd8da";
+  gClip(pw, ph);
+  gx.fillStyle = "rgba(80,200,100,.13)"; gx.beginPath(); gx.moveTo(X(0), Y(0));
+  for (let i = 0; i <= 60; i++) { const s = Su * i / 60; gx.lineTo(X(s), Y(fail(s))); } gx.lineTo(X(Su), Y(0)); gx.fill();
+  gLine([[0, Sy], [Sy, 0]], X, Y, "rgba(255,255,255,.7)", 2, [8, 5]);
+  const gp = []; for (let i = 0; i <= 60; i++) { const s = Su * i / 60; gp.push([s, gerber(s)]); }
+  gLine([[0, Se], [Su, 0]], X, Y, COLG, crit === "gd" ? 3.5 : 2, crit === "gd" ? [] : [6, 5]);
+  gLine(gp, X, Y, COLB, crit === "gb" ? 3.5 : 2, crit === "gb" ? [] : [6, 5]);
+  if (sa > 0 || sm > 0) gLine([[0, 0], [sm * nn, sa * nn]], X, Y, "rgba(255,255,255,.55)", 1.5, [4, 4]);
+  gx.restore();
+  const ok = nn >= 1; gDot(X(sm * nn), Y(sa * nn), "rgba(255,255,255,.35)");
+  gDot(X(sm), Y(sa), ok ? "#50c864" : "#ff5a5f"); gText("your stent", X(sm) + 12, Y(sa) - 10, "#fff");
+  gText("safe zone", X(x1 * 0.03), Y(y1 * 0.06), "rgba(120,220,140,.95)");
+  gKey([["Goodman line", COLG, crit === "gd" ? [] : [6, 5]], ["Gerber curve", COLB, crit === "gb" ? [] : [6, 5]], ["Yield limit (σa + σm = yield)", "rgba(255,255,255,.7)", [8, 5]]], ML + pw - 250, MT + 22);
+  const yielded = sm + sa >= Sy;
+  $("gNums").textContent = "For " + m.name + " (endurance limit " + Se + " MPa, ultimate strength " + Su + " MPa) the crowns see an alternating stress of " + Math.round(sa) + " MPa around a mean of " + Math.round(sm) + " MPa. Safety factor: Goodman " + fmt(nG) + ", Gerber " + fmt(nR) + ". " +
+    (!ok ? "With the " + (crit === "gd" ? "Goodman" : "Gerber") + " criterion this stent is expected to crack before 400 million heartbeats (about 10 years)." : yielded ? "It survives fatigue, but the peak stress already exceeds the yield limit." : "With the " + (crit === "gd" ? "Goodman" : "Gerber") + " criterion this stent should survive 400 million heartbeats (about 10 years).");
+  $("gTrend").textContent = "Any stress state is a point on this map. The more mean stress it carries (to the right), the less alternating stress it tolerates. The Gerber curve bows above the Goodman line, so it gives a less cautious answer. The dashed line from the origin through your point shows how far everything would have to scale up to fail.";
+  $("gTheory").textContent = "Goodman: σa/Se + σm/Su = 1. Gerber: σa/Se + (σm/Su)² = 1. Safety factor n = distance to the curve along the load line. Se is the endurance limit at about 4×10⁸ cycles, Su the ultimate strength. A heart beats roughly 40 million times a year. Crown stress comes from the same bending model as the Inside the stent page.";
+  $("gMean").textContent = "Fatigue, not one big load, is what usually breaks stents. Thin struts raise the alternating stress, residual stress from balloon expansion raises the mean, and a vessel that moves a lot (such as the leg artery) adds extra cycling. Nitinol has a low endurance limit here because its fatigue is driven by strain, not stress. These are illustrative teaching values, not design data.";
+}
+
+function g5() {
+  // Flexibility: bending moment vs curvature. Straight line M = EI·κ, slope set by strut width and thickness (same EI model as "Inside the stent").
+  const m = MAT[MATOF[$("type").value]];
+  const w = +$("mw").value / 1000, t = +$("mt").value / 1000, L = +$("mL").value, R = +$("mR").value, N = +$("mN").value;
+  $("gfw").value = $("mw").value; $("gft").value = $("mt").value;
+  $("gfwOut").textContent = $("mw").value + " µm"; $("gftOut").textContent = $("mt").value + " µm";
+  const KM = 0.15, ELEN = 10, deg = k => k * ELEN * 180 / Math.PI;
+  const EIof = (w, t, L, R, N) => 0.1 * m.E * t * w * w * w * N * (R / L) * (R / L);          // bending stiffness, N·mm²
+  const EI = EIof(w, t, L, R, N), EI0 = EIof(0.09, 0.09, 1.2, 1.5, 8);
+  const ky = m.eps / (0.15 * 3 * w * R / L);                                                   // curvature where the crowns reach yield
+  // fixed vertical scale (set by a 150 µm strut of the starting design), so a wider strut visibly steepens the line
+  const top = EIof(0.15, 0.09, 1.2, 1.5, 8) * KM, st = [.01,.02,.05,.1,.2,.5,1,2,5,10,20,50,100,200,500].find(x => top / x <= 6) || 500, ymax = Math.ceil(top / st) * st;
+  const yt = []; for (let v = 0; v <= ymax + 1e-9; v += st) yt.push(+v.toFixed(3));
+  const { X, Y, pw, ph } = gSetup({ x0:0, x1:KM, y0:0, y1:ymax, xt:[0,.03,.06,.09,.12,.15], yt, xtf:k => k.toFixed(2) + " (" + Math.round(deg(k)) + "°)",
+    xl:"Bending curvature κ (1/mm), with the bend angle over a 10 mm stent length in brackets", yl:"Bending moment (N·mm)" });
+  gClip(pw, ph);
+  gLine([[0, 0], [KM, EI0 * KM]], X, Y, "rgba(255,255,255,.7)", 2, [6, 5]);
+  const kEl = Math.min(ky, KM);
+  gLine([[0, 0], [kEl, EI * kEl]], X, Y, GCOL.none, 4);
+  if (ky < KM) gLine([[ky, EI * ky], [KM, EI * KM]], X, Y, GCOL.none, 2.5, [3, 5]);
+  gx.restore();
+  if (ky < KM && EI * ky <= ymax) { gDot(X(ky), Y(EI * ky), "#f2b64d"); gText("struts start to yield", X(ky) + 12, Y(EI * ky) + 20, "#f2b64d"); }
+  const off = EI * KM > ymax, kc = ymax / EI;
+  if (off) gText("↑ steeper than the chart: leaves the top at κ = " + kc.toFixed(3), Math.min(X(kc) + 8, ML + pw - 6), MT + 16, "#ff5a5f", X(kc) + 8 > ML + pw - 280 ? "right" : "left");
+  gKey([["Current design, slope EI = " + (EI < 10 ? EI.toFixed(1) : Math.round(EI)) + " N·mm²", GCOL.none], ["Starting design (90 × 90 µm struts)", "rgba(255,255,255,.7)", [6, 5]]], ML + pw - 330, MT + ph - 44);
+  const fmt = v => v < 10 ? v.toFixed(1) : Math.round(v), pct = Math.round(EI / EI0 * 100), M1 = EI * 0.1, ratio = EI / EI0;
+  $("gNums").textContent = "For " + m.name + " struts " + $("mw").value + " µm wide and " + $("mt").value + " µm thick, the stent has a bending stiffness EI of " + fmt(EI) + " N·mm², which is " + pct + "% of the starting design. " +
+    "Bending it to κ = 0.10 per mm (about " + Math.round(deg(0.1)) + "° over a 10 mm length) takes a moment of " + fmt(M1) + " N·mm." +
+    (ky < KM ? " Beyond κ = " + ky.toFixed(3) + " per mm the crowns yield, so the dotted part is only the elastic prediction." : " The struts stay elastic over this whole range.");
+  $("gTrend").textContent = "The line is straight and its slope is the stent's bending stiffness. Widening the struts rotates the line upward very quickly because the width is cubed: " +
+    (ratio >= 1.05 ? "your design is " + ratio.toFixed(1) + " times as stiff as the starting one, so it needs " + ratio.toFixed(1) + " times the moment for the same bend." : ratio <= 0.95 ? "your design is only " + ratio.toFixed(2) + " times as stiff as the starting one, so the same bend needs far less moment." : "your design matches the starting one, so the two lines lie on top of each other.") +
+    " Doubling the width makes the line 8 times steeper, while doubling the thickness only doubles it.";
+  $("gTheory").textContent = "For a straight beam, M = EI·κ, where κ = 1/(bend radius) is the curvature. A strut of width w and thickness t has I = t·w³/12, and a ring of N crowns with strut length L on radius R behaves like EI ≈ 0.1·E·t·w³·N·(R/L)², the same model used on the Inside the stent page. Bend angle over a length ℓ is θ = κ·ℓ (here ℓ = 10 mm). Simplified teaching model, not design data.";
+  $("gMean").textContent = "A steeper line means the stent resists bending more, so it is harder to push around the twists of a winding vessel (poor trackability) and it straightens the artery instead of following it. Wider struts add strength against squeezing, but they cost flexibility. That is the trade-off behind the thin struts of modern stents.";
+}
+function gDraw() { const v = $("gsel").value; $("fatBox").style.display = v === "g4" ? "block" : "none"; $("flexBox").style.display = v === "g5" ? "block" : "none"; ({ g1, g2, g3, g4, g5 })[v](); }
+[["gfw", "mw"], ["gft", "mt"]].forEach(([a, b]) => $(a).addEventListener("input", () => { $(b).value = $(a).value; $(b).dispatchEvent(new Event("input", { bubbles:true })); }));
+document.addEventListener("input", gDraw); document.addEventListener("change", gDraw);
+gDraw();
+
+update();
+if (!reduce) requestAnimationFrame(frame);
+</script>
+
+<script>
+(function(){
+  const pages=["home","sim","rank","inside","graphs"];
+  function show(p){
+    if(!pages.includes(p)) p="home";
+    document.documentElement.dataset.page=p;
+    pages.forEach(k=>document.getElementById("v-"+k).classList.toggle("on",k===p));
+    document.querySelectorAll("#nav a[data-p]").forEach(a=>a.classList.toggle("act",a.dataset.p===p));
+    try{ if(p==="inside"&&typeof mRefresh==="function")mRefresh(); if(p==="graphs"&&typeof gDraw==="function")gDraw(); }catch(e){}
+    window.scrollTo(0,0);
+    document.dispatchEvent(new Event("pagechange"));
+  }
+  document.addEventListener("click",function(e){
+    const a=e.target.closest('a[href^="#"]'); if(!a) return;
+    const p=a.getAttribute("href").slice(1); if(!pages.includes(p)) return;
+    e.preventDefault(); show(p);
+    try{ history.replaceState(null,"","#"+p); }catch(err){}
+  });
+  window.addEventListener("hashchange",function(){ show(location.hash.slice(1)); });
+  let start="home"; try{ start=location.hash.slice(1)||"home"; }catch(e){}
+  show(start);
+})();
+</script>
+
+<script>
+(function(){
+  let t=null; const btn=$("dpPlay");
+  function stop(){ if(t){clearInterval(t);t=null;} btn.textContent="▶ Play the sequence"; }
+  btn.addEventListener("click",function(){
+    if(t){stop();return;}
+    const rs=[...document.querySelectorAll("input[name=mstep]")]; let i=rs.findIndex(r=>r.checked);
+    btn.textContent="❚❚ Pause";
+    t=setInterval(function(){ i=(i+1)%rs.length; rs[i].checked=true; mRefresh(); },1800);
+  });
+  document.querySelectorAll("input[name=mload]").forEach(function(r){
+    r.addEventListener("change",function(){
+      if(r.checked&&r.value==="dp"&&has3D) $("mview3d").checked=true; else if(r.checked) stop();
+      mRefresh();
+    });
+  });
+})();
+</script>
+<script>
+$("toFatigue").addEventListener("click",function(){ $("gsel").value="g4"; });
+</script>
+
+<script>
+(function(){
+  const NAME="Aneurix", RED=3, COUNT_TO=72, COUNT_MS=2000, OPEN_AT=2400, LETTERS_AT=3300, STEP=170;
+  const el=document.getElementById("intro"), box=el.querySelector(".name"), root=document.documentElement;
+  const reduced=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  root.classList.add("introing");
+  let done=false, n=0;
+  box.innerHTML=NAME.split(" ").map(w=>'<span class="w">'+[...w].map(c=>{ const i=n++; return '<span class="ch'+(i>=NAME.length-RED?' red':'')+'" style="--i:'+i+';--d:'+LETTERS_AT+'ms">'+c+'</span>'; }).join("")+'</span>').join(" ");
+  el.querySelector(".tag").style.setProperty("--td",(LETTERS_AT+1900)+"ms");
+  function finish(){
+    if(done) return; done=true;
+    try{ if(location.hash!=="#home") location.hash="#home"; }catch(e){}     // the home page opens once the name is complete
+    el.classList.add("out"); root.classList.remove("introing");
+    setTimeout(()=>el.remove(),900);
+  }
+  if(reduced){ el.querySelector(".cnt").remove(); el.classList.add("open"); box.querySelectorAll(".ch").forEach(c=>{c.style.animationDuration=".01s";c.style.animationDelay="0s";}); el.querySelector(".tag").style.setProperty("--td","0s"); setTimeout(finish,900); }
+  else {
+    const t0=performance.now(), N=document.getElementById("introN"), B=document.getElementById("introB");
+    (function tick(now){ if(done) return; const q=Math.min(1,(now-t0)/COUNT_MS), e=1-Math.pow(1-q,3);
+      N.textContent=Math.round(e*COUNT_TO); B.style.width=(q*160)+"px"; if(q<1) requestAnimationFrame(tick); })(t0);
+    setTimeout(()=>{ if(!done) el.classList.add("open"); },OPEN_AT);          // curtains open only after the count reaches 72
+    setTimeout(finish, LETTERS_AT+(NAME.length-1)*STEP+1100+800+900);         // last letter lands, tagline fades in, short pause, then open the site
+  }
+  el.addEventListener("click",finish);
+  document.addEventListener("keydown",finish,{once:true});
+})();
+</script>
+
+<script>
+(function(){
+  const cv=document.getElementById("heroCv"), cx=cv.getContext("2d"), root=document.documentElement;
+  const reduced=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let W=0,H=0,vis=true,phi=0,phiUser=0,drag=null,last=0;
+  function size(){ const d=Math.min(window.devicePixelRatio||1,2); W=cv.clientWidth; H=cv.clientHeight; if(!W||!H) return; cv.width=W*d; cv.height=H*d; cx.setTransform(d,0,0,d,0,0); }
+  // stent: RINGS zigzag rings of N crowns, joined by short links (same idea as the Inside page)
+  const RINGS=7,N=8,A=.2,LINK=.1,P=2*A+LINK,LEN=(RINGS-1)*P,YAW=.7,TILT=-.2,CAM=9;
+  const HEAT=[[0,[49,92,224]],[.35,[36,190,225]],[.7,[245,220,70]],[1,[255,90,95]]];
+  function heat(q){ q=Math.max(0,Math.min(1,q)); for(let i=1;i<HEAT.length;i++) if(q<=HEAT[i][0]){ const [a,A1]=HEAT[i-1],[b,B]=HEAT[i],t=(q-a)/(b-a); return [0,1,2].map(k=>Math.round(A1[k]+(B[k]-A1[k])*t)); } return HEAT[3][1]; }
+  function draw(ts){
+    cx.clearRect(0,0,W,H);
+    const R=.9*(1+.05*Math.sin(ts/900)), sc=Math.min(W/4.9,H/3.3), ph=phi+phiUser, cph=Math.cos(ph), sph=Math.sin(ph), cy=Math.cos(YAW), sy=Math.sin(YAW), ct=Math.cos(TILT), st=Math.sin(TILT);
+    const V=(j,i)=>{ const th=i*Math.PI/N; let x=j*P-LEN/2+(((i+j)&1)?A:-A), y=R*Math.cos(th), z=R*Math.sin(th);
+      let t=y*cph-z*sph; z=y*sph+z*cph; y=t;                 // spin about the stent axis
+      t=x*cy+z*sy; z=-x*sy+z*cy; x=t;                        // turn toward the viewer
+      t=x*ct-y*st; y=x*st+y*ct; x=t;                         // tilt on screen
+      return [x,y,z]; };
+    const segs=[], push=(p,q,heatQ,w)=>{ const z=(p[2]+q[2])/2; segs.push([z,p,q,heatQ,w]); };
+    for(let j=0;j<RINGS;j++){
+      const pulse=.55+.45*Math.sin(ts/700-j*.6);              // stress shimmers along the stent
+      for(let i=0;i<2*N;i++){
+        const p=V(j,i), q=V(j,(i+1)%(2*N));
+        for(let k=0;k<4;k++){ const u0=k/4,u1=(k+1)/4, a=p.map((v,m)=>v+(q[m]-v)*u0), b=p.map((v,m)=>v+(q[m]-v)*u1);
+          push(a,b,Math.abs(1-(u0+u1))*pulse*.95+.05,1); }
+        if(j<RINGS-1&&((i+j)&1)&&(((i>>1)+j)%2===0)) push(p,V(j+1,i),.12,.8);   // link to the next ring
+      }
+    }
+    segs.sort((a,b)=>a[0]-b[0]);
+    cx.lineCap="round";
+    for(const [z,p,q,hq,w] of segs){
+      const zn=Math.max(0,Math.min(1,(z+2.2)/4.4)), k1=CAM/(CAM-p[2]), k2=CAM/(CAM-q[2]), c=heat(hq);
+      cx.strokeStyle="rgba("+c[0]+","+c[1]+","+c[2]+","+(.1+.9*zn*zn).toFixed(3)+")";
+      cx.lineWidth=(1.5+2.6*zn)*w*Math.max(.7,Math.min(1.3,W/560));
+      cx.beginPath(); cx.moveTo(W/2+p[0]*k1*sc,H/2-p[1]*k1*sc); cx.lineTo(W/2+q[0]*k2*sc,H/2-q[1]*k2*sc); cx.stroke();
+    }
+  }
+  function loop(ts){
+    if(root.dataset.page==="home"&&vis&&W){ phi+=(ts-last)*.0006; draw(ts); }
+    last=ts; requestAnimationFrame(loop);
+  }
+  size(); if(window.ResizeObserver) new ResizeObserver(()=>{ size(); if(reduced) draw(0); }).observe(cv); else addEventListener("resize",size);
+  if(window.IntersectionObserver) new IntersectionObserver(e=>{ vis=e[0].isIntersecting; }).observe(cv);
+  cv.addEventListener("pointerdown",e=>{ drag={x:e.clientX,p:phiUser}; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener("pointermove",e=>{ if(drag){ phiUser=drag.p+(e.clientX-drag.x)*.012; if(reduced) draw(0); } });
+  ["pointerup","pointercancel"].forEach(n=>cv.addEventListener(n,()=>{ drag=null; }));
+  if(reduced) draw(0); else requestAnimationFrame(loop);
+  // buttons and scroll reveal
+  document.getElementById("heroGo").addEventListener("click",()=>document.getElementById("explore").scrollIntoView({behavior:reduced?"auto":"smooth"}));
+  const cards=[...document.querySelectorAll("#explore .card")];
+  if(window.IntersectionObserver&&!reduced){
+    cards.forEach((c,i)=>{ c.classList.add("rv"); c.style.setProperty("--d",(i%2)*.12+"s"); });
+    const io=new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } }),{threshold:.15});
+    cards.forEach(c=>io.observe(c));
+  }
+})();
 </script>
 </body>
 </html>
